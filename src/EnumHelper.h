@@ -113,7 +113,7 @@ namespace StringConversion \
 }
 
 // currently unused
-// #define LuaDeclareType(X)
+#define LuaDeclareType(X)
 
 // #define LuaXType(X)	\
 // template struct EnumTraits<X>; \
