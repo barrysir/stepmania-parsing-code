@@ -1,4 +1,6 @@
 #include "MsdFile.h"
+#include "GameManager.h"
+#include "GameConstantsAndTypes.h"
 #include <iostream>
 
 void print_msd(const MsdFile &m) {
@@ -14,7 +16,18 @@ void print_msd(const MsdFile &m) {
     }
 }
 
+void test_gameman() {
+    GAMEMAN = new GameManager();
+    auto x = GAMEMAN->GetStepsTypeInfo(StepsType_popn_five);
+    std::cout << "---- Testing GameManager ----" << std::endl;
+    std::cout << "StepsType_popn_five = " << x.szName << " with " << x.iNumTracks << " columns" << std::endl;
+    std::cout << "pnm-five = " << (int)(GAMEMAN->StringToStepsType("pnm-five")) << std::endl;
+    std::cout << "-----------------------------" << std::endl;
+}
+
 int main(int argc, char *argv[]) {
+    test_gameman();
+
     if (argc <= 1) {
         std::cout << "Usage: " << argv[0] << " [file path]" << std::endl;
         return 0;
