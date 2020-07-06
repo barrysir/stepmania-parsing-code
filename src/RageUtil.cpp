@@ -1464,7 +1464,7 @@ void StripMacResourceForks( vector<RString> &vs )
 // }
 
 #ifndef USE_SYSTEM_PCRE
-#include "pcre/pcre.h"
+#include "../extern/pcre/pcre.h"
 #else
 #include <pcre.h>
 #endif
