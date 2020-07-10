@@ -105,6 +105,7 @@
 //  * This should probably be used instead of throwing an exception in most 
 //  * cases we expect never to happen (but not in cases that we do expect, 
 //  * such as DSound init failure.) */
+// #define FAIL_M(MESSAGE) do { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); } while(0)
 #define FAIL_M(MESSAGE) do { throw std::runtime_error(MESSAGE); } while(0)
 #define ASSERT_M(COND, MESSAGE) do { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } } while(0)
 
@@ -114,7 +115,7 @@
 #endif
 
 // /** @brief Use this to catch switching on invalid values */
-// #define DEFAULT_FAIL(i) 	default: FAIL_M( ssprintf("%s = %i", #i, (i)) )
+#define DEFAULT_FAIL(i) 	default: FAIL_M( ssprintf("%s = %i", #i, (i)) )
 
 void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning ); // don't pull in LOG here
 #define WARN(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, true))

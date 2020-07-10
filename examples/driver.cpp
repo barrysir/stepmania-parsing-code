@@ -1,6 +1,7 @@
 #include "MsdFile.h"
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
+#include "RageLog.h"
 #include <iostream>
 
 void print_msd(const MsdFile &m) {
@@ -16,8 +17,12 @@ void print_msd(const MsdFile &m) {
     }
 }
 
-void test_gameman() {
+void initialize() {
     GAMEMAN = new GameManager();
+    LOG = new RageLog();
+}
+
+void test_gameman() {
     auto x = GAMEMAN->GetStepsTypeInfo(StepsType_popn_five);
     std::cout << "---- Testing GameManager ----" << std::endl;
     std::cout << "StepsType_popn_five = " << x.szName << " with " << x.iNumTracks << " columns" << std::endl;
@@ -26,6 +31,7 @@ void test_gameman() {
 }
 
 int main(int argc, char *argv[]) {
+    initialize();
     test_gameman();
 
     if (argc <= 1) {
