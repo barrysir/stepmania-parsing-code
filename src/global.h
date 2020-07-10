@@ -122,17 +122,17 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 #define TRACE(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, false))
 #endif
 
-// #ifdef DEBUG
-// // No reason to kill the program. A lot of these don't produce a crash in NDEBUG so why stop?
-// // TODO: These should have something you can hook a breakpoint on.
-// #define DEBUG_ASSERT_M(COND,MESSAGE) if(unlikely(!(COND))) WARN(MESSAGE)
-// #define DEBUG_ASSERT(COND) DEBUG_ASSERT_M(COND,"Debug assert failed")
-// #else
-// /** @brief A dummy define to keep things going smoothly. */
-// #define DEBUG_ASSERT(x)
-// /** @brief A dummy define to keep things going smoothly. */
-// #define DEBUG_ASSERT_M(x,y)
-// #endif
+#ifdef DEBUG
+// No reason to kill the program. A lot of these don't produce a crash in NDEBUG so why stop?
+// TODO: These should have something you can hook a breakpoint on.
+#define DEBUG_ASSERT_M(COND,MESSAGE) if(unlikely(!(COND))) WARN(MESSAGE)
+#define DEBUG_ASSERT(COND) DEBUG_ASSERT_M(COND,"Debug assert failed")
+#else
+/** @brief A dummy define to keep things going smoothly. */
+#define DEBUG_ASSERT(x)
+/** @brief A dummy define to keep things going smoothly. */
+#define DEBUG_ASSERT_M(x,y)
+#endif
 
 // /* Use SM_UNIQUE_NAME to get the line number concatenated to x. This is useful for
 //  * generating unique identifiers in other macros.  */
