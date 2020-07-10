@@ -115,6 +115,10 @@ namespace StringConversion \
 // currently unused
 #define LuaDeclareType(X)
 
+
+// left unimplemented for now
+#define LuaXType(X) 
+
 // #define LuaXType(X)	\
 // template struct EnumTraits<X>; \
 // static void Lua##X(lua_State* L) \
