@@ -380,10 +380,10 @@ public:
 	// void LoadFromNode( const XNode* pNode );
 
 	// barry edit - TimingData* variable
-	// TimingData *m_timingData;
+	TimingData *m_timingData;
 
-	// TimingData* getTimingData() { return m_timingData; }
-	// void setTimingData(TimingData *ptr) { m_timingData = ptr; }
+	TimingData* getTimingData() { return m_timingData; }
+	void setTimingData(TimingData *ptr) { m_timingData = ptr; }
 };
 
 /** @brief Allow a quick way to swap notedata. */

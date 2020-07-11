@@ -1,6 +1,7 @@
 #include "MsdFile.h"
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
+#include "GameState.h"
 #include "RageLog.h"
 #include <iostream>
 
@@ -20,6 +21,7 @@ void print_msd(const MsdFile &m) {
 void initialize() {
     GAMEMAN = new GameManager();
     LOG = new RageLog();
+    GAMESTATE = new GameState();
 }
 
 void test_gameman() {

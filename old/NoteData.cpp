@@ -9,7 +9,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 // #include "XmlFile.h"
-#include "GameState.h" // blame radar calculations.
+// #include "GameState.h" // blame radar calculations.
 #include "RageUtil_AutoPtr.h"
 
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
@@ -470,32 +470,32 @@ bool NoteData::IsTap(const TapNote &tn, const int row) const
 			&& tn.type != TapNoteType_Lift && tn.type != TapNoteType_Fake
 			&& tn.type != TapNoteType_AutoKeysound
 			// barry edit - m_timingData variable
-			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
-			// && m_timingData->IsJudgableAtRow(row));
+			// && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+			&& m_timingData->IsJudgableAtRow(row));
 }
 
 bool NoteData::IsMine(const TapNote &tn, const int row) const
 {
 	return (tn.type == TapNoteType_Mine
 			// barry edit - m_timingData variable
-			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
-			// && m_timingData->IsJudgableAtRow(row));
+			// && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+			&& m_timingData->IsJudgableAtRow(row));
 }
 
 bool NoteData::IsLift(const TapNote &tn, const int row) const
 {
 	return (tn.type == TapNoteType_Lift
 			// barry edit - m_timingData variable
-			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
-			// && m_timingData->IsJudgableAtRow(row));
+			// && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+			&& m_timingData->IsJudgableAtRow(row));
 }
 
 bool NoteData::IsFake(const TapNote &tn, const int row) const
 {
 	return (tn.type == TapNoteType_Fake
 			// barry edit - m_timingData variable
-			|| !GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
-			// || !m_timingData->IsJudgableAtRow(row));
+			// || !GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+			|| !m_timingData->IsJudgableAtRow(row));
 }
 
 int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
@@ -544,9 +544,9 @@ int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 	int iNumNotes = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex ) {
 		// barry edit - m_timingData variable
-		if( IsThereATapAtRow(r) && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r) )
+		// if( IsThereATapAtRow(r) && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r) )
+		if( IsThereATapAtRow(r) && m_timingData->IsJudgableAtRow(r) )
 			iNumNotes++;
-		// if( IsThereATapAtRow(r) && m_timingData->IsJudgableAtRow(r) )
 	}
 	
 	return iNumNotes;
@@ -571,9 +571,9 @@ int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) cons
 	int iNumNotes = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex ) {
 		// barry edit - m_timingData variable
-		if( IsThereATapOrHoldHeadAtRow(r) && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r) )
+		// if( IsThereATapOrHoldHeadAtRow(r) && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r) )
+		if( IsThereATapOrHoldHeadAtRow(r) && m_timingData->IsJudgableAtRow(r) )
 			iNumNotes++;
-		// if( IsThereATapOrHoldHeadAtRow(r) && m_timingData->IsJudgableAtRow(r) )
 	}
 
 	return iNumNotes;
@@ -628,9 +628,9 @@ int NoteData::GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, in
 		if( !RowNeedsAtLeastSimultaneousPresses(iMinSimultaneousPresses,r) )
 			continue;
 		// barry edit - m_timingData variable
-		if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+		// if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+		if (!m_timingData->IsJudgableAtRow(r))
 			continue;
-		// if (!m_timingData->IsJudgableAtRow(r))
 		iNum++;
 	}
 
@@ -643,9 +643,9 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
 		// barry edit - m_timingData variable
-		if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+		// if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+		if (!m_timingData->IsJudgableAtRow(r))
 			continue;
-		// if (!m_timingData->IsJudgableAtRow(r))
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
@@ -676,9 +676,9 @@ int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 				lBegin->second.subType != TapNoteSubType_Hold )
 				continue;
 			// barry edit - m_timingData variable
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			// if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			if (!m_timingData->IsJudgableAtRow(lBegin->first))
 				continue;
-			// if (!m_timingData->IsJudgableAtRow(lBegin->first))
 			iNumHolds++;
 		}
 	}
@@ -698,9 +698,9 @@ int NoteData::GetNumRolls( int iStartIndex, int iEndIndex ) const
 				lBegin->second.subType != TapNoteSubType_Roll )
 				continue;
 			// barry edit - m_timingData variable
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			// if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			if (!m_timingData->IsJudgableAtRow(lBegin->first))
 				continue;
-			// if (!m_timingData->IsJudgableAtRow(lBegin->first))
 			iNumRolls++;
 		}
 	}
@@ -819,9 +819,9 @@ pair<int, int> NoteData::GetNumHoldNotesTwoPlayer( int iStartIndex, int iEndInde
 			   lBegin->second.subType != TapNoteSubType_Hold )
 				continue;
 			// barry edit - m_timingData variable
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			// if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			if (!m_timingData->IsJudgableAtRow(lBegin->first))
 				continue;
-			// if (!m_timingData->IsJudgableAtRow(lBegin->first))
 			if (this->IsPlayer1(t, lBegin->second))
 				num.first++;
 			else
@@ -864,9 +864,9 @@ pair<int, int> NoteData::GetNumRollsTwoPlayer( int iStartIndex, int iEndIndex ) 
 			   lBegin->second.subType != TapNoteSubType_Roll )
 				continue;
 			// barry edit - m_timingData variable
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			// if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
+			if (!m_timingData->IsJudgableAtRow(lBegin->first))
 				continue;
-			// if (!m_timingData->IsJudgableAtRow(lBegin->first))
 			if (this->IsPlayer1(t, lBegin->second))
 				num.first++;
 			else

@@ -18,7 +18,7 @@ Things that have been changed:
    * some defines which live in `config.hpp` (which I guess is a CMake generated file?) such as `PRINTF(a,b), CONST_FUNCTION` are placed in `global.h` and have been redefined (mostly to be blank)
  * `NoteData.h`, `NoteData.cpp`:
    * code relating to `XmlFile`, `XNode` has been commented out
-   * a `TimingData*` member variable has been added to remove the dependency on `GAMESTATE->GetProcessedTimingData()`
+   * ~~a `TimingData*` member variable has been added to remove the dependency on `GAMESTATE->GetProcessedTimingData()`~~ GAMESTATE has been added, implementation has been reverted to the original (though I should change this at some point)
      * (todo: test `NoteData::GetNumRowsWithTap`, `NoteData::GetNumRowsWithTapOrHoldHead` because it has some funny macro stuff)
  * `TimingData.cpp`
    * `TimingData::GetBeatAndBPSFromElapsedTime` and `TimingData::GetElapsedTimeFromBeat` have code commented out relating to `GlobalOffsetSeconds` which the parser doesn't need to worry about
@@ -28,3 +28,7 @@ Things that have been changed:
    * Stuff relating to `ThemeMetric` has been commented out
  * `Steps.h`, `Steps.cpp`:
    * Lua code has been commented out
+   * `CachedObject<Steps>` has been commented out
+ * `GameState.h`, `GameState.cpp`:
+   * very minimal implementation of the class
+   * (will probably remove all dependencies on this class in the finished version of this parser)
