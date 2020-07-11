@@ -29,6 +29,13 @@ Things that have been changed:
  * `Steps.h`, `Steps.cpp`:
    * Lua code has been commented out
    * `CachedObject<Steps>` has been commented out
+   * unused include `#include "Grade.h"` has been commented out
  * `GameState.h`, `GameState.cpp`:
    * very minimal implementation of the class
    * (will probably remove all dependencies on this class in the finished version of this parser)
+ * `NoteDataUtil.h`, `NoteDataUtil.cpp`:
+   * `NoteDataUtil::TransformNoteData()` functions have been commented out due to dependency on `PlayerOptions`
+   * `NoteDataUtil::AddTapAttacks()` has been commented out until `Song` is implemented
+ * `Style.h`, `Style.cpp`:
+   * Stuff relating to `GameInput.h` has been commented out
+   * Lua code has been commented out

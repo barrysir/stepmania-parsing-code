@@ -2,11 +2,14 @@
 #include "GameState.h"
 #include "TimingData.h"
 #include "RageUtil.h"
+#include "Style.h"
 
 GameState*	GAMESTATE = nullptr;	// global and accessible from anywhere in our program
 
 GameState::GameState() :
 	processedTiming(nullptr)
+	// m_pCurGame(				Message_CurrentGameChanged ),
+	// m_pCurStyle(			Message_CurrentStyleChanged ),
 	// m_PlayMode(				Message_PlayModeChanged ),
 	// m_iCoins(				Message_CoinsChanged ),
 	// m_sPreferredSongGroup(	Message_PreferredSongGroupChanged ),
@@ -106,3 +109,22 @@ void GameState::SetProcessedTimingData(TimingData * t)
 	this->processedTiming = t;
 }
 
+
+const Style* GameState::GetCurrentStyle(PlayerNumber pn) const
+{
+	return nullptr;
+	// if(GetCurrentGame() == nullptr) { return nullptr; }
+	// if(!GetCurrentGame()->m_PlayersHaveSeparateStyles)
+	// {
+	// 	return m_pCurStyle;
+	// }
+	// else
+	// {
+	// 	if(pn >= NUM_PLAYERS)
+	// 	{
+	// 		return m_SeparatedStyles[PLAYER_1] == nullptr ? m_SeparatedStyles[PLAYER_2]
+	// 			: m_SeparatedStyles[PLAYER_1];
+	// 	}
+	// 	return m_SeparatedStyles[pn];
+	// }
+}
