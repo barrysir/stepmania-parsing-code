@@ -3,6 +3,7 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "RageLog.h"
+#include "Song.h"
 #include <iostream>
 
 void print_msd(const MsdFile &m) {
@@ -44,5 +45,8 @@ int main(int argc, char *argv[]) {
     m.ReadFile(argv[1], true);
     // m.ReadFromString(argv[1], true);
     print_msd(m);
+    
+    Song s;
+    std::cout << "Song artist: " << s.m_sArtist << std::endl;
     return 0;
 }

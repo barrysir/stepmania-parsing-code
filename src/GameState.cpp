@@ -7,7 +7,7 @@
 GameState*	GAMESTATE = nullptr;	// global and accessible from anywhere in our program
 
 GameState::GameState() :
-	processedTiming(nullptr)
+	processedTiming(nullptr),
 	// m_pCurGame(				Message_CurrentGameChanged ),
 	// m_pCurStyle(			Message_CurrentStyleChanged ),
 	// m_PlayMode(				Message_PlayModeChanged ),
@@ -25,7 +25,7 @@ GameState::GameState() :
 	// m_bGameplayLeadIn(		Message_GameplayLeadInChanged ),
 	// m_bDidModeChangeNoteSkin(	false ),
 	// m_bIsUsingStepTiming(		true ),
-	// m_bInStepEditor(		false ),
+	m_bInStepEditor(		false )
 	// m_stEdit(				Message_EditStepsTypeChanged ),
 	// m_cdEdit(				Message_EditCourseDifficultyChanged ),
 	// m_pEditSourceSteps(		Message_EditSourceStepsChanged ),

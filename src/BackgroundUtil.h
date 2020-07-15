@@ -74,10 +74,10 @@ struct BackgroundChange
 };
 
 /** @brief Shared background-related routines. */
-// namespace BackgroundUtil
-// {
-// 	void AddBackgroundChange( vector<BackgroundChange> &vBackgroundChanges, BackgroundChange seg );
-// 	void SortBackgroundChangesArray( vector<BackgroundChange> &vBackgroundChanges );
+namespace BackgroundUtil
+{
+	void AddBackgroundChange( vector<BackgroundChange> &vBackgroundChanges, BackgroundChange seg );
+	void SortBackgroundChangesArray( vector<BackgroundChange> &vBackgroundChanges );
 	
 // 	void GetBackgroundEffects(	const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
 // 	void GetBackgroundTransitions(	const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
@@ -89,7 +89,7 @@ struct BackgroundChange
 // 	void GetGlobalRandomMovies(	const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
 
 // 	void BakeAllBackgroundChanges( Song *pSong );
-// };
+};
 
 
 #endif

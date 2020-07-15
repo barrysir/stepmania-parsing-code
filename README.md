@@ -3,6 +3,10 @@ The bits of the Stepmania source code related to parsing stepfiles. That makes t
 
  * headers have `using namespace std;` pollution, might fix later
 
+## Requirements
+ * C++17
+ * CMake
+
 I'm starting to notate where I've modified the original code, Ctrl-F `barry edit` to find stuff I've changed. It can get annoyingly spammy in places but I can't think of a better way and I'd rather have the comments than not.
 
 Things that have been changed:
@@ -30,6 +34,7 @@ Things that have been changed:
    * Lua code has been commented out
    * `CachedObject<Steps>` has been commented out
    * unused include `#include "Grade.h"` has been commented out
+   * implementation of `Steps::GetNoteDataFromSimfile` has been removed until all the parsers have been implemented
  * `GameState.h`, `GameState.cpp`:
    * very minimal implementation of the class
    * (will probably remove all dependencies on this class in the finished version of this parser)
@@ -39,3 +44,11 @@ Things that have been changed:
  * `Style.h`, `Style.cpp`:
    * Stuff relating to `GameInput.h` has been commented out
    * Lua code has been commented out
+ * `CryptManager.h`, `CryptManager.cpp`
+   * commented out everything except `CryptManager::GetMD5ForString`, `CryptManager::GetSHA1ForString`
+ * `Song.h`, `Song.cpp`:
+   * commented functions: LoadFromSongdir, ReloadFromSongDir, HasAutosaveFile, LoadAutosaveFile
+   * TranslateTitles
+   * commented stuff relating to ImageDir -- some cache-y performance stuff, not relevant to us
+ * `SongUtil.h`, `SongUtil.cpp`:
+   * Removed implementations for everything except the `SongUtil::GetStepsXXX` methods

@@ -411,11 +411,18 @@ RString Commify(const RString& num, const RString& sep, const RString& dot)
 // 	return NUM_PREFIX.GetValue() + ssprintf("%i", i) + sSuffix;
 // }
 
+// barry edit: BRUH WHY ARE THE ARGUMENTS IN MINGW FLIPPED AROUND
+void localtime_s( const time_t *timer, struct tm *buf )  {
+	localtime_s(buf, timer);
+}
+
 struct tm GetLocalTime()
 {
 	const time_t t = time(nullptr);
 	struct tm tm;
-	localtime_r( &t, &tm );
+
+	// barry edit: change from localtime_r to localtime_s
+	localtime_s( &t, &tm );
 	return tm;
 }
 

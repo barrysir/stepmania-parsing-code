@@ -26,8 +26,8 @@ public:
 	// static bool VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile );
 	// static bool Verify( RageFileBasic &file, RString sSignature, RString sPublicKey );
 
-	static void GetRandomBytes( void *pData, int iBytes );
-	static RString GenerateRandomUUID();
+	// static void GetRandomBytes( void *pData, int iBytes );
+	// static RString GenerateRandomUUID();
 
 	// barry edit: commenting, file I/O
 	// static RString GetMD5ForFile( RString fn );		// in binary

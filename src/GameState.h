@@ -39,6 +39,12 @@ public:
 	
 	// This is set to a random number per-game/round; it can be used for a random seed.
 	int			m_iGameSeed = 0, m_iStageSeed = 0;
+
+	/**
+	 * @brief Are we presently in the Step Editor, where some rules apply differently?
+	 *
+	 * TODO: Find a better way to implement this. */
+	bool m_bInStepEditor;
 };
 
 extern GameState*	GAMESTATE;	// global and accessible from anywhere in our program
