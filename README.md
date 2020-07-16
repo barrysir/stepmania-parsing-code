@@ -52,3 +52,10 @@ Things that have been changed:
    * commented stuff relating to ImageDir -- some cache-y performance stuff, not relevant to us
  * `SongUtil.h`, `SongUtil.cpp`:
    * Removed implementations for everything except the `SongUtil::GetStepsXXX` methods
+ * the RageFile library has been heavily stripped down
+   * RageFileDriverStd is custom code which uses the standard library for file I/O
+   * RageFileBasic is unmodified
+   * RageFileDriver has a couple of functions and includes commented out
+   * RageFile has been changed to call RageFileDriverStd directly, rather than using the FILEMAN pointer
+   * RageFile has LUA code commented out
+   * RageFileManager only contains some enums and the implementations for the filesystem functions in RageUtil

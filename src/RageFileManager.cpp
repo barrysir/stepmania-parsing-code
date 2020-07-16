@@ -23,12 +23,6 @@ bool DoesFileExist( const RString &sPath )
 // --------------------------------
 //  File
 // --------------------------------
-class RageFileManager
-{
-public:	
-	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
-};
-
 class FileSet;
 struct File
 {

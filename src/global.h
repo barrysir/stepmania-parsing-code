@@ -106,6 +106,7 @@
 //  * cases we expect never to happen (but not in cases that we do expect, 
 //  * such as DSound init failure.) */
 // #define FAIL_M(MESSAGE) do { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); } while(0)
+#include <stdexcept>
 #define FAIL_M(MESSAGE) do { throw std::runtime_error(MESSAGE); } while(0)
 #define ASSERT_M(COND, MESSAGE) do { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } } while(0)
 
