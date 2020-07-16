@@ -37,7 +37,9 @@ int RageFileObjStd::GetFileSize() const {
 }
 
 RageFileBasic *RageFileDriverStd::Open( const RString &sPath, int mode, int &err ) {
-    std::ios::openmode flags;
+    // specify binary mode (rather than text mode) so \n isn't turned into \r\n
+    // (was having a problem with double line breaks [CR][CR][LF])
+    std::ios::openmode flags = std::ios::binary;
     if (mode & RageFile::READ) {
         flags |= std::fstream::in;
     }

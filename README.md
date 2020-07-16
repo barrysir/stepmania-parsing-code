@@ -59,3 +59,6 @@ Things that have been changed:
    * RageFile has been changed to call RageFileDriverStd directly, rather than using the FILEMAN pointer
    * RageFile has LUA code commented out
    * RageFileManager only contains some enums and the implementations for the filesystem functions in RageUtil
+ * NotesWriterSM:
+   * `ThemeMetric<bool> USE_CREDIT` has been replaced with a plain bool and set to `false`. Maybe let this value be customizable in the future?
+   * `NotesWriterSM::WriteEditFileToMachine()` removed

@@ -6,6 +6,7 @@
 #include "NoteData.h"
 #include "Song.h"
 #include "NotesLoaderSM.h"
+#include "NotesWriterSM.h"
 #include <iostream>
 
 void print_msd(const MsdFile &m) {
@@ -68,6 +69,14 @@ void test_smfile(const std::string &filepath) {
     }
 }
 
+void test_write_smfile(const std::string &filepath, const std::string &out) {
+    Song s;
+    SMLoader loader;
+    loader.LoadFromSimfile(filepath, s);
+    
+    NotesWriterSM::Write(out, s, s.GetAllSteps());
+}
+
 int main(int argc, char *argv[]) {
     initialize();
     test_gameman();
@@ -77,5 +86,6 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     test_smfile(argv[1]);
+    test_write_smfile(argv[1], "output.sm");
     return 0;
 }
