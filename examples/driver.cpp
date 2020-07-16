@@ -3,7 +3,9 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "RageLog.h"
+#include "NoteData.h"
 #include "Song.h"
+#include "NotesLoaderSM.h"
 #include <iostream>
 
 void print_msd(const MsdFile &m) {
@@ -33,6 +35,39 @@ void test_gameman() {
     std::cout << "-----------------------------" << std::endl;
 }
 
+void test_msdfile(const std::string &filepath) {
+    MsdFile m;
+    m.ReadFile(filepath, true);
+    // m.ReadFromString(filepath, true);
+    print_msd(m);
+}
+
+void test_smfile(const std::string &filepath) {
+    Song s;
+    SMLoader loader;
+    loader.LoadFromSimfile(filepath, s);
+    std::cout << s.m_sArtist << " - " << s.m_sMainTitle << std::endl;
+    std::cout << "BPMs: ";
+    for (auto &p : s.m_SongTiming.ToVectorString(TimingSegmentType::SEGMENT_BPM)) {
+        std::cout << p << ',';
+    }    
+    std::cout << std::endl;
+
+    std::cout << "--------- Steps ---------" << std::endl;
+    // dance-single Beginner 23 (xx steps)
+    for (Steps *steps : s.GetAllSteps()) {
+        NoteData test;
+        steps->GetNoteData(test);
+        std::cout
+            << steps->m_StepsTypeStr << " "
+            << DifficultyToString(steps->GetDifficulty()) << " "
+            << steps->GetMeter() << " "
+            << "(" << test.GetNumTapNotesNoTiming() << " steps"
+            << ", " << steps->GetCredit() << ")"
+            << std::endl;
+    }
+}
+
 int main(int argc, char *argv[]) {
     initialize();
     test_gameman();
@@ -41,12 +76,6 @@ int main(int argc, char *argv[]) {
         std::cout << "Usage: " << argv[0] << " [file path]" << std::endl;
         return 0;
     }
-    MsdFile m;
-    m.ReadFile(argv[1], true);
-    // m.ReadFromString(argv[1], true);
-    print_msd(m);
-    
-    Song s;
-    std::cout << "Song artist: " << s.m_sArtist << std::endl;
+    test_smfile(argv[1]);
     return 0;
 }

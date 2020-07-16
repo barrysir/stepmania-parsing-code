@@ -22,7 +22,7 @@ const RString& DifficultyToString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );
 LuaDeclareType( Difficulty );
 
-// Difficulty OldStyleStringToDifficulty( const RString& sDC ); // compatibility
+Difficulty OldStyleStringToDifficulty( const RString& sDC ); // compatibility
 
 // typedef Difficulty CourseDifficulty;
 // const int NUM_CourseDifficulty = NUM_Difficulty;
