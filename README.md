@@ -47,9 +47,10 @@ Things that have been changed:
  * `CryptManager.h`, `CryptManager.cpp`
    * commented out everything except `CryptManager::GetMD5ForString`, `CryptManager::GetSHA1ForString`
  * `Song.h`, `Song.cpp`:
-   * commented functions: LoadFromSongdir, ReloadFromSongDir, HasAutosaveFile, LoadAutosaveFile
+   * commented functions: ReloadFromSongDir, HasAutosaveFile, LoadAutosaveFile
    * TranslateTitles
    * commented stuff relating to ImageDir -- some cache-y performance stuff, not relevant to us
+   * calls to FILEMAN->GetDirListingWithMultipleExtensions have been replaced with GetDirListingWithMultipleExtensions
  * `SongUtil.h`, `SongUtil.cpp`:
    * Removed implementations for everything except the `SongUtil::GetStepsXXX` methods
  * the RageFile library has been heavily stripped down
@@ -59,6 +60,11 @@ Things that have been changed:
    * RageFile has been changed to call RageFileDriverStd directly, rather than using the FILEMAN pointer
    * RageFile has LUA code commented out
    * RageFileManager only contains some enums and the implementations for the filesystem functions in RageUtil
+   * added global function GetDirListingWithMultipleExtensions to RageFileManager (usually accessed by FILEMAN->GetDirListingWithMultipleExtensions)
  * NotesWriterSM:
    * `ThemeMetric<bool> USE_CREDIT` has been replaced with a plain bool and set to `false`. Maybe let this value be customizable in the future?
    * `NotesWriterSM::WriteEditFileToMachine()` removed
+ * ActorUtil:
+   * only left code related to GetTypeExtensionList()
+ * NotesLoader:
+   * limited number of filetypes currently supported

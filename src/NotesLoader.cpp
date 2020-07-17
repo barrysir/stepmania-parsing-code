@@ -1,6 +1,6 @@
 #include "global.h"
 #include "NotesLoader.h"
-// #include "NotesLoaderSM.h"
+#include "NotesLoaderSM.h"
 // #include "NotesLoaderSMA.h"
 // #include "NotesLoaderSSC.h"
 // #include "NotesLoaderDWI.h"
@@ -27,13 +27,10 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 
 bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages, bool load_autosave )
 {
-	// barry edit - not implemented yet
-	throw std::runtime_error("NotesLoader::LoadFromDir not implemented yet");
-	return false;
+	// barry edit - currently only a few filetypes are supported
+	vector<RString> list;
 
-	// vector<RString> list;
-
-	// BlacklistedImages.clear();
+	BlacklistedImages.clear();
 	// SSCLoader loaderSSC;
 	// loaderSSC.GetApplicableFiles( sPath, list, load_autosave );
 	// if( !list.empty() )
@@ -46,10 +43,10 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	// loaderSMA.GetApplicableFiles( sPath, list );
 	// if (!list.empty() )
 	// 	return loaderSMA.LoadFromDir( sPath, out );
-	// SMLoader loaderSM;
-	// loaderSM.GetApplicableFiles( sPath, list );
-	// if (!list.empty() )
-	// 	return loaderSM.LoadFromDir( sPath, out );
+	SMLoader loaderSM;
+	loaderSM.GetApplicableFiles( sPath, list );
+	if (!list.empty() )
+		return loaderSM.LoadFromDir( sPath, out );
 	// DWILoader::GetApplicableFiles( sPath, list );
 	// if( !list.empty() )
 	// 	return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );

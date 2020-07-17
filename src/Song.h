@@ -91,8 +91,8 @@ public:
 	 *
 	 * This assumes that there is no song present right now.
 	 * @param sDir the song directory from which to load. */
-	// bool LoadFromSongDir(RString sDir, bool load_autosave= false,
-	// 	ProfileSlot from_profile= ProfileSlot_Invalid);
+	bool LoadFromSongDir(RString sDir, bool load_autosave= false,
+		ProfileSlot from_profile= ProfileSlot_Invalid);
 	// // This one takes the effort to reuse Steps pointers as best as it can
 	// bool ReloadFromSongDir( RString sDir );
 	// bool ReloadFromSongDir() { return ReloadFromSongDir(GetSongDir()); }

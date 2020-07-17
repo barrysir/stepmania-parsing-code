@@ -16,7 +16,7 @@
 // #include "ProfileManager.h"
 // #include "Sprite.h"
 // #include "RageFile.h"
-// #include "RageFileManager.h"
+#include "RageFileManager.h"
 // #include "RageSurface.h"
 // #include "RageTextureManager.h"
 #include "NoteDataUtil.h"
@@ -25,7 +25,7 @@
 // #include "StepsUtil.h"
 #include "BackgroundUtil.h"
 // #include "SpecialFiles.h"
-// #include "NotesLoader.h"			// temporary
+#include "NotesLoader.h"			// temporary
 // #include "NotesLoaderSM.h"		// temporary
 // #include "NotesLoaderSSC.h"		// temporary
 // #include "NotesWriterDWI.h"		// temporary
@@ -34,7 +34,7 @@
 // #include "NotesWriterSSC.h"		// temporary
 // #include "UnlockManager.h"
 // #include "LyricsLoader.h"		// temporary
-// #include "ActorUtil.h"
+#include "ActorUtil.h"
 // #include "CommonMetrics.h"
 
 #include <time.h>
@@ -273,184 +273,197 @@ const RString &Song::GetSongFilePath() const
  * <set> into Song.h, which is heavily used. */
 static set<RString> BlacklistedImages;
 
-// /* If PREFSMAN->m_bFastLoad is true, always load from cache if possible.
-//  * Don't read the contents of sDir if we can avoid it. That means we can't call
-//  * HasMusic(), HasBanner() or GetHashForDirectory().
-//  * If true, check the directory hash and reload the song from scratch if it's changed.
-//  */
-// bool Song::LoadFromSongDir(RString sDir, bool load_autosave, ProfileSlot from_profile)
-// {
-// //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
-// 	ASSERT_M( sDir != "", "Songs can't be loaded from an empty directory!" );
+// barry edit - removed code involving caching
+/* If PREFSMAN->m_bFastLoad is true, always load from cache if possible.
+ * Don't read the contents of sDir if we can avoid it. That means we can't call
+ * HasMusic(), HasBanner() or GetHashForDirectory().
+ * If true, check the directory hash and reload the song from scratch if it's changed.
+ */
+bool Song::LoadFromSongDir(RString sDir, bool load_autosave, ProfileSlot from_profile)
+{
+//	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
+	ASSERT_M( sDir != "", "Songs can't be loaded from an empty directory!" );
 
-// 	// make sure there is a trailing slash at the end of sDir
-// 	if( sDir.Right(1) != "/" )
-// 		sDir += "/";
+	// make sure there is a trailing slash at the end of sDir
+	if( sDir.Right(1) != "/" )
+		sDir += "/";
 
-// 	// save song dir
-// 	m_sSongDir = sDir;
+	// save song dir
+	m_sSongDir = sDir;
 
-// 	bool use_cache = true;
+	bool use_cache = true;
 
-// 	// save group name
-// 	if(from_profile == ProfileSlot_Invalid)
-// 	{
-// 		vector<RString> sDirectoryParts;
-// 		split( m_sSongDir, "/", sDirectoryParts, false );
-// 		ASSERT( sDirectoryParts.size() >= 4 ); /* e.g. "/Songs/Slow/Taps/" */
-// 		m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
-// 		ASSERT( m_sGroupName != "" );
-// 	}
-// 	else
-// 	{
-// 		m_LoadedFromProfile= from_profile;
-// 		m_sGroupName= PROFILEMAN->GetProfile(from_profile)->m_sDisplayName;
-// 		use_cache= false;
-// 	}
+	// save group name
+	vector<RString> sDirectoryParts;
+	split( m_sSongDir, "/", sDirectoryParts, false );
+	ASSERT( sDirectoryParts.size() >= 4 ); /* e.g. "/Songs/Slow/Taps/" */
+	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
+	ASSERT( m_sGroupName != "" );
 
-// 	RString cache_file_path;
-// 	if(m_LoadedFromProfile == ProfileSlot_Invalid)
-// 	{
-// 		// First, look in the cache for this song (without loading NoteData)
-// 		unsigned uCacheHash = SONGINDEX->GetCacheHash(m_sSongDir);
-// 		cache_file_path = GetCacheFilePath();
+	// barry edit - original code:
+	// if(from_profile == ProfileSlot_Invalid)
+	// {
+	// 	vector<RString> sDirectoryParts;
+	// 	split( m_sSongDir, "/", sDirectoryParts, false );
+	// 	ASSERT( sDirectoryParts.size() >= 4 ); /* e.g. "/Songs/Slow/Taps/" */
+	// 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
+	// 	ASSERT( m_sGroupName != "" );
+	// }
+	// else
+	// {
+	// 	m_LoadedFromProfile= from_profile;
+	// 	m_sGroupName= PROFILEMAN->GetProfile(from_profile)->m_sDisplayName;
+	// 	use_cache= false;
+	// }
 
-// 		if( !DoesFileExist(cache_file_path) )
-// 		{ use_cache = false; }
-// 		else if(!PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uCacheHash)
-// 		{ use_cache = false; } // this cache is out of date
-// 		else if(load_autosave)
-// 		{ use_cache= false; }
-// 	}
+	// RString cache_file_path;
+	// if(m_LoadedFromProfile == ProfileSlot_Invalid)
+	// {
+	// 	// First, look in the cache for this song (without loading NoteData)
+	// 	unsigned uCacheHash = SONGINDEX->GetCacheHash(m_sSongDir);
+	// 	cache_file_path = GetCacheFilePath();
 
-// 	if(use_cache)
-// 	{
-// 		/*
-// 		LOG->Trace("Loading '%s' from cache file '%s'.",
-// 				   m_sSongDir.c_str(),
-// 				   GetCacheFilePath().c_str());
-// 		*/
-// 		SSCLoader loaderSSC;
-// 		bool bLoadedFromSSC = loaderSSC.LoadFromSimfile( cache_file_path, *this, true );
-// 		if( !bLoadedFromSSC )
-// 		{
-// 			// load from .sm
-// 			SMLoader loaderSM;
-// 			loaderSM.LoadFromSimfile( cache_file_path, *this, true );
-// 			loaderSM.TidyUpData( *this, true );
-// 		}
-// 		if(m_sMainTitle == "" || (m_sMusicFile == "" && m_vsKeysoundFile.empty()))
-// 		{
-// 			LOG->Warn("Main title or music file for '%s' came up blank, forced to fall back on TidyUpData to fix title and paths.  Do not use # or ; in a song title.", m_sSongDir.c_str());
-// 			// Tell TidyUpData that it's not loaded from the cache because it needs
-// 			// to hit the song folder to find the files that weren't found. -Kyz
-// 			TidyUpData(false, false);
-// 		}
-// 	}
-// 	else
-// 	{
-// 		// There was no entry in the cache for this song, or it was out of date.
-// 		// Let's load it from a file, then write a cache entry.
+	// 	if( !DoesFileExist(cache_file_path) )
+	// 	{ use_cache = false; }
+	// 	else if(!PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uCacheHash)
+	// 	{ use_cache = false; } // this cache is out of date
+	// 	else if(load_autosave)
+	// 	{ use_cache= false; }
+	// }
 
-// 		if(!NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages, load_autosave))
-// 		{
-// 			LOG->UserLog( "Song", sDir, "has no SSC, SM, SMA, DWI, BMS, or KSF files." );
+	// if(use_cache)
+	// {
+	// 	/*
+	// 	LOG->Trace("Loading '%s' from cache file '%s'.",
+	// 			   m_sSongDir.c_str(),
+	// 			   GetCacheFilePath().c_str());
+	// 	*/
+	// 	SSCLoader loaderSSC;
+	// 	bool bLoadedFromSSC = loaderSSC.LoadFromSimfile( cache_file_path, *this, true );
+	// 	if( !bLoadedFromSSC )
+	// 	{
+	// 		// load from .sm
+	// 		SMLoader loaderSM;
+	// 		loaderSM.LoadFromSimfile( cache_file_path, *this, true );
+	// 		loaderSM.TidyUpData( *this, true );
+	// 	}
+	// 	if(m_sMainTitle == "" || (m_sMusicFile == "" && m_vsKeysoundFile.empty()))
+	// 	{
+	// 		LOG->Warn("Main title or music file for '%s' came up blank, forced to fall back on TidyUpData to fix title and paths.  Do not use # or ; in a song title.", m_sSongDir.c_str());
+	// 		// Tell TidyUpData that it's not loaded from the cache because it needs
+	// 		// to hit the song folder to find the files that weren't found. -Kyz
+	// 		TidyUpData(false, false);
+	// 	}
+	// }
+	// else
+	// {
+	// There was no entry in the cache for this song, or it was out of date.
+	// Let's load it from a file, then write a cache entry.
 
-// 			vector<RString> audios;
-// 			FILEMAN->GetDirListingWithMultipleExtensions(sDir,
-// 				ActorUtil::GetTypeExtensionList(FT_Sound), audios);
-// 			bool has_music = !audios.empty();
+	if(!NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages, load_autosave))
+	{
+		LOG->UserLog( "Song", sDir, "has no SSC, SM, SMA, DWI, BMS, or KSF files." );
 
-// 			if(!has_music)
-// 			{
-// 				LOG->UserLog( "Song", sDir, "has no music file either. Ignoring this song directory." );
-// 				return false;
-// 			}
-// 			// Make sure we have a future filename figured out.
-// 			vector<RString> folders;
-// 			split(sDir, "/", folders);
-// 			RString songName = folders[2] + ".ssc";
-// 			this->m_sSongFileName = sDir + songName;
-// 			// Continue on with a blank Song so that people can make adjustments using the editor.
-// 		}
-// 		// If edits are not cached, looking for them causes a substantial hit to
-// 		// loading time. -Kyz
-// 		LoadEditsFromSongDir(sDir);
+		vector<RString> audios;
+		// barry edit
+		// FILEMAN->GetDirListingWithMultipleExtensions(sDir,
+		// 	ActorUtil::GetTypeExtensionList(FT_Sound), audios);
+		GetDirListingWithMultipleExtensions(sDir,
+			ActorUtil::GetTypeExtensionList(FT_Sound), audios);
+		bool has_music = !audios.empty();
 
-// 		TidyUpData(false, true);
+		if(!has_music)
+		{
+			LOG->UserLog( "Song", sDir, "has no music file either. Ignoring this song directory." );
+			return false;
+		}
+		// Make sure we have a future filename figured out.
+		vector<RString> folders;
+		split(sDir, "/", folders);
+		RString songName = folders[2] + ".ssc";
+		this->m_sSongFileName = sDir + songName;
+		// Continue on with a blank Song so that people can make adjustments using the editor.
+	}
+	// If edits are not cached, looking for them causes a substantial hit to
+	// loading time. -Kyz
+	// barry edit - commented out for now
+	// LoadEditsFromSongDir(sDir);
 
-// 		// Don't save a cache file if the autosave is being loaded, because the
-// 		// cache file would contain the autosave filename. -Kyz
-// 		// Songs loaded from removable profile are never cached, on the
-// 		// assumption that they'll change frequently and have invalid cache
-// 		// entries. -Kyz
-// 		if(!load_autosave && m_LoadedFromProfile == ProfileSlot_Invalid)
-// 		{
-// 			// save a cache file so we don't have to parse it all over again next time
-// 			if(!SaveToCacheFile())
-// 			{ cache_file_path = RString(); }
-// 		}
-// 	}
+	TidyUpData(false, true);
 
-// 	if(m_LoadedFromProfile != ProfileSlot_Invalid)
-// 	{
-// 		if(m_fMusicLengthSeconds > PREFSMAN->m_custom_songs_max_seconds)
-// 		{
-// 			LOG->Trace("Custom song %s is too long.", m_sSongDir.c_str());
-// 			return false;
-// 		}
-// 		RageFile music;
-// 		if(!music.Open(GetMusicPath(), RageFile::READ))
-// 		{
-// 			LOG->Trace("Custom song %s could not open music.", m_sSongDir.c_str());
-// 			return false;
-// 		}
-// 		if(music.GetFileSize() > PREFSMAN->m_custom_songs_max_megabytes * 1000000)
-// 		{
-// 			LOG->Trace("Custom song %s music file is too big.", m_sSongDir.c_str());
-// 			return false;
-// 		}
-// 		m_pre_customify_song_dir= m_sSongDir;
-// 		m_sSongDir= custom_songify_path(m_sSongDir);
-// 		m_sBannerFile.clear();
-// 		m_sJacketFile.clear();
-// 		m_sCDFile.clear();
-// 		m_sDiscFile.clear();
-// 		m_sLyricsFile.clear();
-// 		m_sBackgroundFile.clear();
-// 		m_sCDTitleFile.clear();
-// 	}
+	// Don't save a cache file if the autosave is being loaded, because the
+	// cache file would contain the autosave filename. -Kyz
+	// Songs loaded from removable profile are never cached, on the
+	// assumption that they'll change frequently and have invalid cache
+	// entries. -Kyz
+	// if(!load_autosave && m_LoadedFromProfile == ProfileSlot_Invalid)
+	// {
+	// 	// save a cache file so we don't have to parse it all over again next time
+	// 	if(!SaveToCacheFile())
+	// 	{ cache_file_path = RString(); }
+	// }
+	// }
 
-// 	for (Steps *s : m_vpSteps)
-// 	{
-// 		if(m_LoadedFromProfile != ProfileSlot_Invalid)
-// 		{
-// 			s->ChangeFilenamesForCustomSong();
-// 		}
-// 		/* Compress all Steps. During initial caching, this will remove cached
-// 		 * NoteData; during cached loads, this will just remove cached SMData. */
-// 		s->Compress();
-// 	}
+	// if(m_LoadedFromProfile != ProfileSlot_Invalid)
+	// {
+	// 	if(m_fMusicLengthSeconds > PREFSMAN->m_custom_songs_max_seconds)
+	// 	{
+	// 		LOG->Trace("Custom song %s is too long.", m_sSongDir.c_str());
+	// 		return false;
+	// 	}
+	// 	RageFile music;
+	// 	if(!music.Open(GetMusicPath(), RageFile::READ))
+	// 	{
+	// 		LOG->Trace("Custom song %s could not open music.", m_sSongDir.c_str());
+	// 		return false;
+	// 	}
+	// 	if(music.GetFileSize() > PREFSMAN->m_custom_songs_max_megabytes * 1000000)
+	// 	{
+	// 		LOG->Trace("Custom song %s music file is too big.", m_sSongDir.c_str());
+	// 		return false;
+	// 	}
+	// 	m_pre_customify_song_dir= m_sSongDir;
+	// 	m_sSongDir= custom_songify_path(m_sSongDir);
+	// 	m_sBannerFile.clear();
+	// 	m_sJacketFile.clear();
+	// 	m_sCDFile.clear();
+	// 	m_sDiscFile.clear();
+	// 	m_sLyricsFile.clear();
+	// 	m_sBackgroundFile.clear();
+	// 	m_sCDTitleFile.clear();
+	// }
 
-// 	// Load the cached Images, if it's not loaded already.
-// 	if( PREFSMAN->m_ImageCache == IMGCACHE_LOW_RES_PRELOAD )
-// 	{
-// 		for( RString Image : ImageDir )
-// 		{
-// 			IMAGECACHE->LoadImage( Image, GetCacheFile( Image ) );
-// 		}		
-// 	}
+	// for (Steps *s : m_vpSteps)
+	// {
+		// if(m_LoadedFromProfile != ProfileSlot_Invalid)
+		// {
+		// 	s->ChangeFilenamesForCustomSong();
+		// }
+		/* Compress all Steps. During initial caching, this will remove cached
+		 * NoteData; during cached loads, this will just remove cached SMData. */
+		// s->Compress();
+	// }
 
-// 	// Add AutoGen pointers. (These aren't cached.)
-// 	AddAutoGenNotes();
+	// Load the cached Images, if it's not loaded already.
+	// if( PREFSMAN->m_ImageCache == IMGCACHE_LOW_RES_PRELOAD )
+	// {
+	// 	for( RString Image : ImageDir )
+	// 	{
+	// 		IMAGECACHE->LoadImage( Image, GetCacheFile( Image ) );
+	// 	}		
+	// }
 
-// 	if( !m_bHasMusic )
-// 	{
-// 		LOG->UserLog( "Song", sDir, "has no music; ignored." );
-// 		return false;	// don't load this song
-// 	}
-// 	return true;	// do load this song
-// }
+	// Add AutoGen pointers. (These aren't cached.)
+	AddAutoGenNotes();
+
+	// barry edit - commenting for now
+	// if( !m_bHasMusic )
+	// {
+	// 	LOG->UserLog( "Song", sDir, "has no music; ignored." );
+	// 	return false;	// don't load this song
+	// }
+	return true;	// do load this song
+}
 
 // /* This function feels EXTREMELY hacky - copying things on top of pointers so
 //  * they don't break elsewhere.  Maybe it could be rewritten to politely ask the
