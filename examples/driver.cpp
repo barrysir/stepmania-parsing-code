@@ -8,6 +8,7 @@
 #include "NotesLoaderSM.h"
 #include "NotesWriterSM.h"
 #include <iostream>
+#include <filesystem>
 
 void print_msd(const MsdFile &m) {
     for (unsigned i=0; i<m.GetNumValues(); i++) {
@@ -43,10 +44,7 @@ void test_msdfile(const std::string &filepath) {
     print_msd(m);
 }
 
-void test_smfile(const std::string &filepath) {
-    Song s;
-    SMLoader loader;
-    loader.LoadFromSimfile(filepath, s);
+void print_song(const Song &s) {
     std::cout << s.m_sArtist << " - " << s.m_sMainTitle << std::endl;
     std::cout << "BPMs: ";
     for (auto &p : s.m_SongTiming.ToVectorString(TimingSegmentType::SEGMENT_BPM)) {
@@ -69,12 +67,27 @@ void test_smfile(const std::string &filepath) {
     }
 }
 
-void test_write_smfile(const std::string &filepath, const std::string &out) {
+void test_smfile(const std::string &filepath, const std::string &outpath) {
     Song s;
     SMLoader loader;
-    loader.LoadFromSimfile(filepath, s);
-    
-    NotesWriterSM::Write(out, s, s.GetAllSteps());
+    std::cout << "testing " << filepath << std::endl;
+    if (std::filesystem::is_directory(filepath)) {
+        std::cout << "it is a directory" << std::endl;
+        bool success = loader.LoadFromDir(filepath, s);
+        if (!success) {
+            std::cout << "Could not load from directory " << filepath << "!" << std::endl;
+            return;
+        }
+    } else {
+        bool success = loader.LoadFromSimfile(filepath, s);
+        if (!success) {
+            std::cout << "Could not load simfile at " << filepath << "!" << std::endl;
+            return;
+        }
+    }
+
+    print_song(s);
+    NotesWriterSM::Write(outpath, s, s.GetAllSteps());
 }
 
 int main(int argc, char *argv[]) {
@@ -85,7 +98,6 @@ int main(int argc, char *argv[]) {
         std::cout << "Usage: " << argv[0] << " [file path]" << std::endl;
         return 0;
     }
-    test_smfile(argv[1]);
-    test_write_smfile(argv[1], "output.sm");
+    test_smfile(argv[1], "output.sm");
     return 0;
 }

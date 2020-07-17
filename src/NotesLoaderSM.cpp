@@ -261,12 +261,12 @@ RString SMLoader::GetSongTitle() const
 	return this->songTitle;
 }
 
-// bool SMLoader::LoadFromDir( const RString &sPath, Song &out, bool load_autosave )
-// {
-// 	vector<RString> aFileNames;
-// 	GetApplicableFiles( sPath, aFileNames, load_autosave );
-// 	return LoadFromSimfile( sPath + aFileNames[0], out );
-// }
+bool SMLoader::LoadFromDir( const RString &sPath, Song &out, bool load_autosave )
+{
+	vector<RString> aFileNames;
+	GetApplicableFiles( sPath, aFileNames, load_autosave );
+	return LoadFromSimfile( sPath + aFileNames[0], out );
+}
 
 float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
 {
@@ -1283,17 +1283,17 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 // 	return false;
 // }
 
-// void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave )
-// {
-// 	if(load_autosave)
-// 	{
-// 		GetDirListing( sPath + RString("*.ats" ), out );
-// 	}
-// 	else
-// 	{
-// 		GetDirListing( sPath + RString("*" + this->GetFileExtension() ), out );
-// 	}
-// }
+void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave )
+{
+	if(load_autosave)
+	{
+		GetDirListing( sPath + RString("*.ats" ), out );
+	}
+	else
+	{
+		GetDirListing( sPath + RString("*" + this->GetFileExtension() ), out );
+	}
+}
 
 void SMLoader::TidyUpData( Song &song, bool bFromCache )
 {

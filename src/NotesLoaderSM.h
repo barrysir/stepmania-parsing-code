@@ -33,10 +33,8 @@ struct SMLoader
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a reference to the Song that will retrieve the song information.
 	 * @return its success or failure.
-     * 
-     * NOT IMPLEMENTED YET, requires some bits of the Rage filesystem module
 	 */
-	// virtual bool LoadFromDir( const RString &sPath, Song &out, bool load_autosave= false );
+	virtual bool LoadFromDir( const RString &sPath, Song &out, bool load_autosave= false );
 
 	/**
 	 * @brief Perform some cleanup on the loaded song.
@@ -65,7 +63,7 @@ struct SMLoader
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a vector of files found in the path.
 	 */
-	// virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave= false );
+	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave= false );
 
 	/**
 	 * These edit functions depend on the rage filesystem code

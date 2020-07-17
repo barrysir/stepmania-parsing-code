@@ -193,7 +193,7 @@ void GetFilesMatching( const RString &sDir, const RString &sBeginning, const RSt
     // fill a file set with paths in sDir
 	FileSet fs;
     for(auto& p: std::filesystem::directory_iterator((const char*)(sDir))) {
-        std::string name = p.path().string();
+        std::string name = p.path().filename().string();
         File f(name);
         f.dir = std::filesystem::is_directory(p);
         fs.files.insert(f);
@@ -207,7 +207,7 @@ void GetFilesEqualTo( const RString &sDir, const RString &sFile, vector<RString>
     // fill a file set with paths in sDir
 	FileSet fs;
     for(auto& p: std::filesystem::directory_iterator((const char*)(sDir))) {
-        std::string name = p.path().string();
+        std::string name = p.path().filename().string();
         File f(name);
         f.dir = std::filesystem::is_directory(p);
         fs.files.insert(f);
