@@ -2,7 +2,7 @@
 #include "NotesLoader.h"
 #include "NotesLoaderSM.h"
 // #include "NotesLoaderSMA.h"
-// #include "NotesLoaderSSC.h"
+#include "NotesLoaderSSC.h"
 // #include "NotesLoaderDWI.h"
 // #include "NotesLoaderBMS.h"
 // #include "NotesLoaderKSF.h"
@@ -31,14 +31,14 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	vector<RString> list;
 
 	BlacklistedImages.clear();
-	// SSCLoader loaderSSC;
-	// loaderSSC.GetApplicableFiles( sPath, list, load_autosave );
-	// if( !list.empty() )
-	// {
-	// 	if( !loaderSSC.LoadFromDir( sPath, out, load_autosave ) )
-	// 	{ return false; }
-	// 	return true;
-	// }
+	SSCLoader loaderSSC;
+	loaderSSC.GetApplicableFiles( sPath, list, load_autosave );
+	if( !list.empty() )
+	{
+		if( !loaderSSC.LoadFromDir( sPath, out, load_autosave ) )
+		{ return false; }
+		return true;
+	}
 	// SMALoader loaderSMA;
 	// loaderSMA.GetApplicableFiles( sPath, list );
 	// if (!list.empty() )

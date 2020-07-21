@@ -487,6 +487,16 @@ private:
 	std::array<vector<Steps *>, NUM_StepsType> m_vpStepsByType;
 	/** @brief the Steps that are of unrecognized Styles. */
 	vector<Steps*> m_UnknownStyleSteps;
+
+// barry edit - getters for the Steps vectors
+public:
+	const vector<Steps*> GetSteps() {
+		return m_vpSteps;
+	}
+
+	const vector<Steps*> GetUnknownStyleSteps() {
+		return m_UnknownStyleSteps;
+	}
 };
 
 #endif

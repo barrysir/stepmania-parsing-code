@@ -1,15 +1,51 @@
 # smparser
-The bits of the Stepmania source code related to parsing stepfiles. That makes this a 100% accurate parsing library. As a bonus it has a lot of features which Stepmania itself uses to modify stepfiles.
+A Stepmania file parsing/writing library built from Stepmania's source code. Emphasis on parsing accuracy and support for any parsing performed by Stepmania.
+
+I'm no professional at C++, I've probably made some weird choices while wrangling the code in this library. If you find anything that could be done better let me know.
+
+Eventually I want to add a wiki with some unofficial documentation of the Stepmania file formats, there are some interesting quirks that aren't immediately obvious, if anyone wants to write their own parser. I'd also like get the existing Lua bindings working for scripting support.
 
  * headers have `using namespace std;` pollution, might fix later
 
 ## Requirements
- * C++17
+ * C++17 (`std::filesystem` and other stuff)
  * CMake
 
+## Usage
+CMake will generate a static library `libsmparser.a` for linking. Includes are found in the `src/` directory (this mimics Stepmania's codebase style).
+
+Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`. Once that's done you can call the Stepmania code yourself, or use the few helper functions I've made under the `smparser_` prefixed files (`smparser_SimfileLoader.h`).
+
+All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`) \
+Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
+
+Example of SMParserLibrary use:
+```c++
+#include "smparser.h"
+
+int main() {
+  SMParserLibrary smparserlibrary;
+
+  // ... do stuff ...
+  function();
+  // ... do stuff ...
+
+  return 0;
+  // global pointers automatically cleaned up
+}
+
+void function() {
+  // can initialize it multiple times, will not re-initialize the global variables
+  SMParserLibrary smparserlibrary;
+  // ... do stuff ...
+}
+```
+
+
+## Changelog
 I'm starting to notate where I've modified the original code, Ctrl-F `barry edit` to find stuff I've changed. It can get annoyingly spammy in places but I can't think of a better way and I'd rather have the comments than not.
 
-Things that have been changed:
+(incomplete) List of things that have been changed:
  * Most Lua binding code has been commented out (for now)
    * Described in the details for other files
  * `RageLog.h`, `RageLog.cpp`:
@@ -51,6 +87,7 @@ Things that have been changed:
    * TranslateTitles
    * commented stuff relating to ImageDir -- some cache-y performance stuff, not relevant to us
    * calls to FILEMAN->GetDirListingWithMultipleExtensions have been replaced with GetDirListingWithMultipleExtensions
+   * added getters for the Steps* vectors
  * `SongUtil.h`, `SongUtil.cpp`:
    * Removed implementations for everything except the `SongUtil::GetStepsXXX` methods
  * the RageFile library has been heavily stripped down

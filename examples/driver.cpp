@@ -6,10 +6,47 @@
 #include "NoteData.h"
 #include "Song.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
+#include "NotesLoader.h"
 #include "NotesWriterSM.h"
 #include "ActorUtil.h"
 #include <iostream>
 #include <filesystem>
+#include <set>
+
+// class Simfile { // : public Song
+// private:
+// 	bool SaveToSSCFile(const std::string &filepath);
+// 	bool SaveToSMFile(const std::string &filepath);
+// 	bool SaveToDWIFile(const std::string &filepath);
+// 	bool SaveToJsonFile(const std::string &filepath);
+
+// public:
+//     enum FileType {
+//         DEFAULT,
+//         SSC,
+//         SM,
+//         DWI,
+//         SMA,
+//         BMS,
+//         KSF,
+//         JSON,
+//         NONE
+//     };
+
+//     Simfile() {}
+//     Simfile(const std::string &filepath, FileType format = DEFAULT) {
+//         Load(filepath, format);
+//     }
+
+//     FileType GetTypeFromFilename(const std::string &filepath);
+
+//     bool LoadFromDir(const std::string &filepath);
+//     bool Load(const std::string &filepath, FileType format = DEFAULT);    // extra arg for possible options
+//     bool Save(const std::string &filepath, FileType format = DEFAULT);
+    
+//     bool LoadFromFile(const std::string &filepath, FileType format = DEFAULT) { return Load(filepath, format); }   // alias of Load
+// };
 
 void print_msd(const MsdFile &m) {
     for (unsigned i=0; i<m.GetNumValues(); i++) {
@@ -72,6 +109,72 @@ void print_song(const Song &s) {
     }
 }
 
+bool LoadFromFile(const std::string &filepath, Song &s) {
+	RString extension = GetExtension(filepath);
+	extension.MakeLower(); // must do this because the code is expecting lowercase
+
+	if (extension.empty() || extension == "ssc"
+		|| extension == "ats") // remember cache files.
+	{
+		SSCLoader loader;
+		if ( ! loader.LoadFromSimfile(filepath, s) )
+		{
+			/*
+			HACK: 7/20/12 -- see bugzilla #740
+			users who edit songs using the ever popular .sm file
+			that remove or tamper with the .ssc file later on 
+			complain of blank steps in the editor after reloading.
+			Despite the blank steps being well justified since 
+			the cache files contain only the SSC step file,
+			give the user some leeway and search for a .sm replacement
+			*/
+			SMLoader backup_loader;
+			RString transformedStepFile = filepath;
+			transformedStepFile.Replace(".ssc", ".sm");
+			
+			return backup_loader.LoadFromSimfile(transformedStepFile, s);
+		}
+		else
+		{
+			return true;
+		}
+	}
+	else if (extension == "sm")
+	{
+		SMLoader loader;
+        return loader.LoadFromSimfile(filepath, s);
+	}
+	// else if (extension == "sma")
+	// {
+	// 	SMALoader loader;
+	// 	return loader.LoadNoteDataFromSimfile(filepath, *this);
+	// }
+	// else if (extension == "dwi")
+	// {
+	// 	return DWILoader::LoadNoteDataFromSimfile(filepath, *this);
+	// }
+	// else if (extension == "ksf")
+	// {
+	// 	return KSFLoader::LoadNoteDataFromSimfile(filepath, *this);
+	// }
+	// else if (extension == "bms" || extension == "bml" || extension == "bme" || extension == "pms")
+	// {
+	// 	return BMSLoader::LoadNoteDataFromSimfile(filepath, *this);
+	// }
+	// else if (extension == "edit")
+	// {
+	// 	// Try SSC, then fallback to SM.
+	// 	SSCLoader ldSSC;
+	// 	if(ldSSC.LoadNoteDataFromSimfile(filepath, *this) != true)
+	// 	{
+	// 		SMLoader ldSM;
+	// 		return ldSM.LoadNoteDataFromSimfile(filepath, *this);
+	// 	}
+	// 	else return true;
+	// }
+	return false;
+}
+
 void test_smfile(const std::string &filepath, const std::string &outpath) {
     std::cout << "Testing SMLoader functions" << std::endl;
     Song s;
@@ -107,6 +210,40 @@ void test_smfile(const std::string &filepath, const std::string &outpath) {
     }
 }
 
+void test_file(const std::string &filepath, const std::string &outpath) {
+    Song s;
+    if (std::filesystem::is_directory(filepath)) {
+        std::set<RString> temp;
+        bool success = NotesLoader::LoadFromDir(filepath, s, temp);
+        if (!success) {
+            std::cout << "Could not load from directory " << filepath << "!" << std::endl;
+            return;
+        }
+    } else {
+        bool success = LoadFromFile(filepath, s);
+        if (!success) {
+            std::cout << "Could not load simfile at " << filepath << "!" << std::endl;
+            return;
+        }
+    }
+
+    print_song(s);
+    // NotesWriterSM::Write(outpath, s, s.GetAllSteps());
+
+    {
+        Song s2;
+        if (std::filesystem::is_directory(filepath)) {
+            std::cout << "Testing Song::LoadFromSongDir" << std::endl;
+            bool success = s2.LoadFromSongDir(filepath);
+            if (!success) {
+                std::cout << "Could not load from directory " << filepath << "!" << std::endl;
+                return;
+            }
+            print_song(s2);
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     initialize();
     test_gameman();
@@ -119,6 +256,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "Warning - pack has backslashes! The SM parsing code only supports forward slashes. Converting them to forward slashes for you." << std::endl;
     }
     std::filesystem::path filepath(argv[1]);
-    test_smfile(filepath.generic_string(), "output.sm");
+    // test_smfile(filepath.generic_string(), "output.sm");
+    test_file(filepath.generic_string(), "output.sm");
     return 0;
 }
