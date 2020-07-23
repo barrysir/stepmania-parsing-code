@@ -6,6 +6,8 @@ I'm no professional at C++, I've probably made some weird choices while wranglin
 Eventually I want to add a wiki with some unofficial documentation of the Stepmania file formats, there are some interesting quirks that aren't immediately obvious, if anyone wants to write their own parser. I'd also like get the existing Lua bindings working for scripting support.
 
  * headers have `using namespace std;` pollution, might fix later
+ * sort the CMake source lists alphabetically
+ * finish the dumper script
 
 ## Requirements
  * C++17 (`std::filesystem` and other stuff)
@@ -49,8 +51,8 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
  * Most Lua binding code has been commented out (for now)
    * Described in the details for other files
  * `RageLog.h`, `RageLog.cpp`:
-   * code has been gutted to swallow all log messages (todo: change this to print to stderr?)
-   * (todo: remove all the logging instances in the code, or find some way to initialize the LOG global variable automatically)
+   * code has been gutted
+   * any log messages are written to stderr (for debug purposes)
  * `global.h`:
    * Most of the contents have been commented out, and I've been uncommenting stuff which is needed in the parsing code
    * the `FAIL_M` macro has been changed to throw an exception rather than calling `sm_crash`

@@ -4,6 +4,7 @@
 #include "NotesLoaderSSC.h"
 #include "NotesLoaderSM.h"
 #include "NotesWriterSM.h"
+#include "NotesWriterSSC.h"
 #include <unordered_map>
 #include <algorithm>
 
@@ -20,7 +21,7 @@ std::string GetExtension( const std::string &sPath )
 	return sPath.substr( pos+1, sPath.size()-pos+1 );
 }
 
-void MakeLower(std::string &data) {
+static inline void MakeLower(std::string &data) {
     std::transform(data.begin(), data.end(), data.begin(),
     [](unsigned char c){ return std::tolower(c); });
 }
@@ -48,6 +49,56 @@ SimfileLoader::FileType SimfileLoader::GetTypeFromFilename(const std::string &fi
         return NONE;
     }
     return x->second;
+}
+
+std::string SimfileLoader::GetExtensionFromType(FileType type) {
+    switch (type)
+    {
+        case SSC:   return "ssc";
+        case SM:    return "sm";
+        case DWI:   return "dwi";
+        case JSON:  return "json";
+        case SMA:   return "sma";
+        case BMS:   return "bms";       // there are multiple valid filetypes, pick one of them to return
+        case KSF:   return "ksf";
+        case NONE:  return "";
+        default:
+            return "";
+    };
+}
+
+std::string SimfileLoader::GetFileLoadedFromDir(const std::string &dirpath) {
+    // This is copied from the NotesLoader code
+	vector<RString> list;
+    bool load_autosave = false;     // todo: make this a setting?
+
+	SSCLoader loaderSSC;
+	loaderSSC.GetApplicableFiles( dirpath, list, load_autosave );
+	if( !list.empty() )
+        return list[0];
+    
+	// SMALoader loaderSMA;
+	// loaderSMA.GetApplicableFiles( sPath, list );
+	// if (!list.empty() )
+	// 	return list[0];
+    
+	SMLoader loaderSM;
+	loaderSM.GetApplicableFiles( dirpath, list );
+	if (!list.empty() )
+        return list[0];
+
+	// DWILoader::GetApplicableFiles( sPath, list );
+	// if( !list.empty() )
+	// 	return list[0];
+    
+	// BMSLoader::GetApplicableFiles( sPath, list );
+	// if( !list.empty() )
+	// 	return list[0];
+
+	// KSFLoader::GetApplicableFiles( sPath, list );
+	// if( !list.empty() )
+	// 	return list[0];    
+    return "";
 }
 
 bool SimfileLoader::LoadFromDir(const std::string &filepath, Song &out) {
@@ -86,19 +137,18 @@ bool SimfileLoader::Load(const std::string &filepath, Song &out, FileType format
 
 bool SimfileLoader::SaveToSSCFile(const RString &sPath, Song &out)
 {
-    return false;   // not implemented yet
-	// vector<Steps*> vpStepsToSave;
-	// for (Steps *pSteps : m_vpSteps)
-	// {
-	// 	vpStepsToSave.push_back( pSteps );
-	// }
-	// for (Steps *s : m_UnknownStyleSteps)
-	// {
-	// 	vpStepsToSave.push_back(s);
-	// }
+	vector<Steps*> vpStepsToSave;
+	for (Steps *pSteps : out.GetSteps())
+	{
+		vpStepsToSave.push_back( pSteps );
+	}
+	for (Steps *s : out.GetUnknownStyleSteps())
+	{
+		vpStepsToSave.push_back(s);
+	}
 
     // set bSavingCache to false
-	// return NotesWriterSSC::Write(sPath, *this, vpStepsToSave, false);
+	return NotesWriterSSC::Write(sPath, out, vpStepsToSave, false);
 }
 
 bool SimfileLoader::SaveToSMFile(const RString &sPath, Song &out)
@@ -117,6 +167,10 @@ bool SimfileLoader::SaveToSMFile(const RString &sPath, Song &out)
 }
 
 bool SimfileLoader::Save(const std::string &filepath, Song &out, FileType format) {
+    if (format == DEFAULT) {
+        format = GetTypeFromFilename(filepath);
+    }
+
     switch (format)
     {
         case SSC:

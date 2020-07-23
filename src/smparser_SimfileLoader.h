@@ -27,6 +27,7 @@ public:
     // might add flags to set parser options later
     
     FileType GetTypeFromFilename(const std::string &filepath);
+    std::string GetExtensionFromType(FileType type);
 
     bool LoadFromDir(const std::string &filepath, Song &out);
     bool Load(const std::string &filepath, Song &out, FileType format = DEFAULT);
@@ -34,6 +35,9 @@ public:
     bool LoadFromFile(const std::string &filepath, Song &out, FileType format = DEFAULT) {  // alias for Load
         return Load(filepath, out, format);
     }
+
+    std::string GetFileLoadedFromDir(const std::string &dirpath);
+    // LoadFromFile(GetFileLoadedFromDir(path), s) <=> LoadFromDir(path, s)
 
     // possibly load from string, save to string?
 };

@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     SMParserLibrary smparserlibrary;
 
     if (std::string(argv[1]).find('\\') != std::string::npos) {
-        std::cerr << "Warning - pack has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
+        std::cerr << "Warning - path has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
     }
     std::filesystem::path filepath(argv[1]);
     dump_simfile(filepath.generic_string());

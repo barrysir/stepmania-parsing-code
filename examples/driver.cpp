@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     if (std::string(argv[1]).find('\\') != std::string::npos) {
-        std::cerr << "Warning - pack has backslashes! The SM parsing code only supports forward slashes. Converting them to forward slashes for you." << std::endl;
+        std::cerr << "Warning - path has backslashes! The SM parsing code only supports forward slashes. Converting them to forward slashes for you." << std::endl;
     }
     std::filesystem::path filepath(argv[1]);
     // test_smfile(filepath.generic_string(), "output.sm");

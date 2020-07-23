@@ -127,8 +127,10 @@ void RageLog::UserLog( const RString &sType, const RString &sElement, const char
 	Write( WRITE_TO_USER_LOG, sBuf );
 }
 
+#include <iostream>
 void RageLog::Write( int where, const RString &sLine )
 {
+	std::cerr << sLine << std::endl;
 	return; 
 	// const char *const sWarningSeparator = "/////////////////////////////////////////";
 	// vector<RString> asLines;
