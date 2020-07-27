@@ -1,6 +1,5 @@
-list(APPEND EXECUTABLES driver dumpmsd dumpsim convert)
+list(APPEND EXECUTABLES dumpmsd dumpsim convert)
 
-add_executable(driver driver.cpp)
 add_executable(dumpmsd dumpmsd.cpp)
 add_executable(dumpsim dumpsim.cpp)
 add_executable(convert convert.cpp)
