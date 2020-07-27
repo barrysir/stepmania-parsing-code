@@ -5,6 +5,7 @@
 
 #include <string>
 #include "Song.h"
+#include "MsdFile.h"
 
 class SimfileLoader {
 private:
@@ -39,12 +40,16 @@ public:
     // Get the path of the file that would be loaded when calling LoadFromDir()
     std::string GetFileLoadedFromDir(const std::string &dirpath);
 
-    bool LoadFromDir(const std::string &filepath, Song &out);
+    // simfile loading/saving functions
+    bool LoadFromDir(const std::string &dirpath, Song &out);
     bool Load(const std::string &filepath, Song &out, FileType format = DEFAULT);
     bool Save(const std::string &filepath, Song &out, FileType format = DEFAULT);
     bool LoadFromFile(const std::string &filepath, Song &out, FileType format = DEFAULT) {  // alias for Load
         return Load(filepath, out, format);
     }
+
+    // msd parsing
+    bool LoadMsd(const std::string &filepath, MsdFile &out, bool unescape=true);
 
     // LoadFromFile(GetFileLoadedFromDir(path), s) <=> LoadFromDir(path, s)
 

@@ -171,6 +171,11 @@ bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType forma
     return success;
 }
 
+bool SimfileLoader::LoadMsd(const std::string &_filepath, MsdFile &out, bool unescape) {
+    std::string filepath = CleanPath(_filepath, false);
+    return out.ReadFile(filepath, unescape);
+}
+
 bool SimfileLoader::SaveToSSCFile(const RString &sPath, Song &out)
 {
 	vector<Steps*> vpStepsToSave;

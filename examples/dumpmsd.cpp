@@ -1,6 +1,6 @@
 #include "smparser.h"
+#include "smparser_SimfileLoader.h"
 #include "MsdFile.h"
-#include <filesystem>
 #include <iostream>
 
 void print_msd(const MsdFile &m) {
@@ -18,7 +18,11 @@ void print_msd(const MsdFile &m) {
 
 void test_msdfile(const std::string &filepath) {
     MsdFile m;
-    m.ReadFile(filepath, true);
+    // std::string filepath = SimfileLoader().CleanPath(_filepath, false);
+    // m.ReadFile(filepath, true);
+    
+    SimfileLoader loader;
+    loader.LoadMsd(filepath, m);
     print_msd(m);
 }
 
@@ -30,11 +34,6 @@ int main(int argc, char *argv[]) {
     }
     
     SMParserLibrary smparserlibrary;
-
-    if (std::string(argv[1]).find('\\') != std::string::npos) {
-        std::cerr << "Warning - path has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
-    }
-    std::filesystem::path filepath(argv[1]);
-    test_msdfile(filepath.generic_string());
+    test_msdfile(argv[1]);
     return 0;
 }

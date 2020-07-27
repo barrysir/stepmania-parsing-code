@@ -168,16 +168,9 @@ void dump_simfile(const std::string &filepath) {
     SimfileLoader loader;
     Song s;
     if (std::filesystem::is_directory(filepath)) {
-        // make sure filepath has a trailing slash on it
-        std::string new_filepath = filepath;
-        if (new_filepath.back() != '/') {
-            std::cerr << "Warning - path is a directory but does not end in a backslash! Adding a backslash for you." << std::endl;
-            new_filepath.push_back('/');
-        }
-
-        bool success = loader.LoadFromDir(new_filepath, s);
+        bool success = loader.LoadFromDir(filepath, s);
         if (!success) {
-            std::cout << "Could not load from directory " << new_filepath << "!" << std::endl;
+            std::cout << "Could not load from directory " << filepath << "!" << std::endl;
             return;
         }
     } else {
@@ -200,11 +193,6 @@ int main(int argc, char *argv[]) {
     }
     
     SMParserLibrary smparserlibrary;
-
-    if (std::string(argv[1]).find('\\') != std::string::npos) {
-        std::cerr << "Warning - path has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
-    }
-    std::filesystem::path filepath(argv[1]);
-    dump_simfile(filepath.generic_string());
+    dump_simfile(argv[1]);
     return 0;
 }

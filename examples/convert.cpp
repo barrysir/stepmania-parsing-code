@@ -43,9 +43,9 @@ int main(int argc, char *argv[]) {
     SMParserLibrary smparserlibrary;
 
     // Parse argument 1 for filepath
-    if (std::string(argv[1]).find('\\') != std::string::npos) {
-        std::cerr << "Warning - path has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
-    }
+    // if (std::string(argv[1]).find('\\') != std::string::npos) {
+    //     std::cerr << "Warning - path has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
+    // }
     std::filesystem::path filepath(argv[1]);
 
     // Parse argument 2 for output type
@@ -73,9 +73,9 @@ int main(int argc, char *argv[]) {
     // Parse argument 3 for output path
     std::filesystem::path outputpath;
     if (argc > 3) {
-        if (std::string(argv[3]).find('\\') != std::string::npos) {
-            std::cerr << "Warning - output path has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
-        }
+        // if (std::string(argv[3]).find('\\') != std::string::npos) {
+        //     std::cerr << "Warning - output path has backslashes! The SM parsing code only supports forward slashes. Converting to a valid format for you." << std::endl;
+        // }
         outputpath = argv[3];
     } else {
         SimfileLoader loader;
