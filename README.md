@@ -1,7 +1,7 @@
 # smparser
 A Stepmania file parsing/writing library built from Stepmania's source code. Emphasis on parsing accuracy and support for any parsing performed by Stepmania. Currently just the Stepmania source code made to compile standalone and some helper classes, maybe eventually it'll be a custom parser using the Stepmania code.
 
-Still WIP, not all functions work. Sorry about that.
+Still WIP, not all functions work, sorry about that.
 
 I'm no professional at C++, I've probably made some weird choices while wrangling the code in this library. If you find anything that could be improved let me know.
 
@@ -29,9 +29,11 @@ CMake will generate a static library `libsmparser.a` for linking. Includes are f
 
 Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`. Once the variables are initialized you can call the Stepmania code yourself, or use the few helper functions I've made under the `smparser_` prefixed files (`smparser_SimfileLoader.h`).
 
-There are a couple of gotchas to the filepath format: \
-All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`) \
-Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
+If you're calling the Stepmania code directly, there are a couple of gotchas to the filepath format:
+ * All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`)
+ * Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
+
+You don't have to worry about this with `SimfileLoader`, it will clean paths for you.
 
 Example of SMParserLibrary use:
 ```c++
@@ -56,7 +58,7 @@ void function() {
 ```
 
 
-## Changelog
+## Changelist
 I'm starting to notate where I've modified the original code, Ctrl-F `barry edit` to find stuff I've changed. It can get annoyingly spammy in places but I can't think of a better way and I'd rather have the comments than not.
 
 (incomplete) List of things that have been changed:

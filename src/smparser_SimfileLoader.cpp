@@ -68,7 +68,19 @@ std::string SimfileLoader::GetExtensionFromType(FileType type) {
     };
 }
 
-std::string SimfileLoader::GetFileLoadedFromDir(const std::string &dirpath) {
+std::string SimfileLoader::CleanPath(const std::string &path, bool as_directory) {
+    // replace backslashes with slashes? maybe there's a better way
+    std::string slashed = std::filesystem::path(path).generic_string();
+    // append a trailing slash, if this path is supposed to be a directory
+    if (as_directory && slashed.back() != '/') {
+        slashed.push_back('/');
+    }
+    return slashed;
+}
+
+std::string SimfileLoader::GetFileLoadedFromDir(const std::string &_dirpath) {
+    std::string dirpath = CleanPath(_dirpath, true);
+
     // This is copied from the NotesLoader code
 	vector<RString> list;
     bool load_autosave = false;     // todo: make this a setting?
@@ -102,7 +114,10 @@ std::string SimfileLoader::GetFileLoadedFromDir(const std::string &dirpath) {
     return "";
 }
 
-bool SimfileLoader::LoadFromDir(const std::string &filepath, Song &out) {
+bool SimfileLoader::LoadFromDir(const std::string &_filepath, Song &out) {
+    // clean filepath
+    std::string filepath = CleanPath(_filepath, true);
+
     static std::set<RString> blacklist;
     auto oldSongDir = out.GetSongDir();
     out.SetSongDir(filepath);
@@ -113,7 +128,10 @@ bool SimfileLoader::LoadFromDir(const std::string &filepath, Song &out) {
     return success;
 }
 
-bool SimfileLoader::Load(const std::string &filepath, Song &out, FileType format) {
+bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType format) {
+    // clean filepath
+    std::string filepath = CleanPath(_filepath, false);
+
     if (format == DEFAULT) {
         format = GetTypeFromFilename(filepath);
     }
@@ -184,7 +202,10 @@ bool SimfileLoader::SaveToSMFile(const RString &sPath, Song &out)
 	return NotesWriterSM::Write( sPath, out, vpStepsToSave );
 }
 
-bool SimfileLoader::Save(const std::string &filepath, Song &out, FileType format) {
+bool SimfileLoader::Save(const std::string &_filepath, Song &out, FileType format) {
+    // clean filepath
+    std::string filepath = CleanPath(_filepath, false);
+
     if (format == DEFAULT) {
         format = GetTypeFromFilename(filepath);
     }
