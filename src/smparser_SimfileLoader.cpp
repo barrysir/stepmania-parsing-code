@@ -103,7 +103,13 @@ std::string SimfileLoader::GetFileLoadedFromDir(const std::string &dirpath) {
 
 bool SimfileLoader::LoadFromDir(const std::string &filepath, Song &out) {
     static std::set<RString> blacklist;
-    return NotesLoader::LoadFromDir(filepath, out, blacklist);
+    auto oldSongDir = out.GetSongDir();
+    out.SetSongDir(filepath);
+    bool success = NotesLoader::LoadFromDir(filepath, out, blacklist);
+    if (!success) {
+        out.SetSongDir(oldSongDir);
+    }
+    return success;
 }
 
 bool SimfileLoader::Load(const std::string &filepath, Song &out, FileType format) {

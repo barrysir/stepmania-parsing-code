@@ -1,23 +1,35 @@
 # smparser
-A Stepmania file parsing/writing library built from Stepmania's source code. Emphasis on parsing accuracy and support for any parsing performed by Stepmania.
+A Stepmania file parsing/writing library built from Stepmania's source code. Emphasis on parsing accuracy and support for any parsing performed by Stepmania. Currently just the Stepmania source code made to compile standalone and some helper classes, maybe eventually it'll be a custom parser using the Stepmania code.
 
-I'm no professional at C++, I've probably made some weird choices while wrangling the code in this library. If you find anything that could be done better let me know.
+Still WIP, not all functions work. Sorry about that.
 
-Eventually I want to add a wiki with some unofficial documentation of the Stepmania file formats, there are some interesting quirks that aren't immediately obvious, if anyone wants to write their own parser. I'd also like get the existing Lua bindings working for scripting support.
+I'm no professional at C++, I've probably made some weird choices while wrangling the code in this library. If you find anything that could be improved let me know.
 
  * headers have `using namespace std;` pollution, might fix later
- * sort the CMake source lists alphabetically
+ * sort the CMake source lists
  * finish the dumper script
+ * write documentation
+ * (SimfileLoader) set Song::m_sSongDir when loading from file paths
+ * add parsing radar values
+ * add calculating radar values (need to get the length of the audio file... maybe could deduce length from radar values?)
+ * fix NoteData::GetNumTapNotes and related functions (uses GAMESTATE->GetProcessedTimingData)
+ * add the rest of the SM file formats
+ * better error messages
+ * add parsing options to SimfileLoader
+ * add std::path support to SimfileLoader
+ * lyric file parsing
+ * optimize the executable size?
 
 ## Requirements
- * C++17 (`std::filesystem` and other stuff)
+ * C++17 (`std::filesystem` mostly)
  * CMake
 
 ## Usage
 CMake will generate a static library `libsmparser.a` for linking. Includes are found in the `src/` directory (this mimics Stepmania's codebase style).
 
-Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`. Once that's done you can call the Stepmania code yourself, or use the few helper functions I've made under the `smparser_` prefixed files (`smparser_SimfileLoader.h`).
+Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`. Once the variables are initialized you can call the Stepmania code yourself, or use the few helper functions I've made under the `smparser_` prefixed files (`smparser_SimfileLoader.h`).
 
+There are a couple of gotchas to the filepath format: \
 All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`) \
 Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
 
