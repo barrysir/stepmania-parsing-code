@@ -7,6 +7,7 @@
 #include "NotesWriterSSC.h"
 #include <unordered_map>
 #include <algorithm>
+#include <filesystem>
 
 std::string GetExtension( const std::string &sPath )
 {
@@ -117,18 +118,24 @@ bool SimfileLoader::Load(const std::string &filepath, Song &out, FileType format
         format = GetTypeFromFilename(filepath);
     }
 
+    bool success = false;
+    auto oldSongDir = out.GetSongDir();
+    out.SetSongDir(std::filesystem::path(filepath).parent_path().generic_string() + '/');
+
     switch (format)
     {
         case SSC:
             {
                 SSCLoader loader;
-                return loader.LoadFromSimfile(filepath, out);
+                success = loader.LoadFromSimfile(filepath, out);
             }
+            break;
         case SM:
             {
                 SMLoader loader;
-                return loader.LoadFromSimfile(filepath, out);
+                success = loader.LoadFromSimfile(filepath, out);
             }
+            break;
         case SMA:
         case DWI:
         case BMS:
@@ -139,6 +146,11 @@ bool SimfileLoader::Load(const std::string &filepath, Song &out, FileType format
         default:
             return false;
     };
+
+    if (!success) {
+        out.SetSongDir(oldSongDir);
+    }
+    return success;
 }
 
 bool SimfileLoader::SaveToSSCFile(const RString &sPath, Song &out)
