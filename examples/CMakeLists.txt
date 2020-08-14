@@ -1,7 +1,8 @@
-list(APPEND EXECUTABLES dumpmsd dumpsim convert)
+list(APPEND EXECUTABLES dumpmsd dumpsim dumplrc convert)
 
 add_executable(dumpmsd dumpmsd.cpp)
 add_executable(dumpsim dumpsim.cpp)
+add_executable(dumplrc dumplrc.cpp)
 add_executable(convert convert.cpp)
 
 foreach(target ${EXECUTABLES})

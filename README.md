@@ -1,6 +1,8 @@
 # smparser
 A Stepmania file parsing/writing library built from Stepmania's source code. Emphasis on parsing accuracy and support for any parsing performed by Stepmania. Currently just the Stepmania source code made to compile standalone and some helper classes, maybe eventually it'll be a custom parser using the Stepmania code.
 
+Check out the wiki! [link](https://github.com/barrysir/smparser/wiki)
+
 Still WIP, not all functions work, sorry about that.
 
 I'm no professional at C++, I've probably made some weird choices while wrangling the code in this library. If you find anything that could be improved let me know.
@@ -17,8 +19,9 @@ I'm no professional at C++, I've probably made some weird choices while wranglin
  * better error messages
  * add parsing options to SimfileLoader
  * add std::path support to SimfileLoader
- * lyric file parsing
+ * ~~lyric file parsing~~
  * optimize the executable size?
+ * don't output RageLog messages to std::cout, or have it toggleable
 
 ## Requirements
  * C++17 (`std::filesystem` mostly)
@@ -121,3 +124,5 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * only left code related to GetTypeExtensionList()
  * NotesLoader:
    * limited number of filetypes currently supported
+ * LyricsLoader:
+   * removed dependency on theme to get the default colour, default colour can be passed in as an argument to the lyric parser
