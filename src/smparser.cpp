@@ -3,11 +3,13 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ActorUtil.h"
+#include "PrefsManager.h"
 
 bool SMParserLibrary::onetime = false;
 std::shared_ptr<GameManager> SMParserLibrary::m_GAMEMAN(nullptr, [](GameManager *p) { delete p; GAMEMAN = nullptr; });
 std::shared_ptr<RageLog> SMParserLibrary::m_LOG(nullptr, [](RageLog *p) { delete p; LOG = nullptr; });
 std::shared_ptr<GameState> SMParserLibrary::m_GAMESTATE(nullptr, [](GameState *p) { delete p; GAMESTATE = nullptr; });
+std::shared_ptr<PrefsManager> SMParserLibrary::m_PREFSMAN(nullptr, [](PrefsManager *p) { delete p; PREFSMAN = nullptr; });
 
 void SMParserLibrary::InitializeOneTime() {
     ActorUtil::InitFileTypeLists(); 
@@ -27,10 +29,12 @@ void SMParserLibrary::Initialize() {
         m_GAMEMAN = std::make_shared<GameManager>();
         m_LOG = std::make_shared<RageLog>();
         m_GAMESTATE = std::make_shared<GameState>();
+        m_PREFSMAN = std::make_shared<PrefsManager>();
 
         GAMEMAN = m_GAMEMAN.get();
         LOG = m_LOG.get();
         GAMESTATE = m_GAMESTATE.get();
+        PREFSMAN = m_PREFSMAN.get();
     }
     // the pointers are deleted in the shared_ptr deleters
 }

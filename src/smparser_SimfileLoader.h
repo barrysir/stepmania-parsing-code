@@ -30,7 +30,7 @@ public:
     // Guess the simfile type of a file from its name.
     FileType GetTypeFromFilename(const std::string &filepath);
     
-    // Get the file extension of a simfile type.
+    // Get the typical extension of a simfile type.
     std::string GetExtensionFromType(FileType type);
 
     // Prepare a filepath before passing it into the Stepmania code.

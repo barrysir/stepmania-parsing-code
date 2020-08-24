@@ -8,6 +8,7 @@
 class GameManager;
 class RageLog;
 class GameState;
+class PrefsManager;
 
 class SMParserLibrary {
 private:
@@ -15,6 +16,7 @@ private:
     static std::shared_ptr<GameManager> m_GAMEMAN;
     static std::shared_ptr<RageLog> m_LOG;
     static std::shared_ptr<GameState> m_GAMESTATE;
+    static std::shared_ptr<PrefsManager> m_PREFSMAN;
 
     void InitializeOneTime();
     void Initialize();

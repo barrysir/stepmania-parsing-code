@@ -13,7 +13,7 @@
 // #include "SongManager.h"			// removed
 #include "Steps.h"
 #include "Attack.h"
-// #include "PrefsManager.h"		// removed
+#include "PrefsManager.h"
 
 // Everything from this line to the creation of sm_parser_helper exists to
 // speed up parsing by allowing the use of std::map.  All these functions
@@ -963,7 +963,7 @@ bool SMLoader::LoadFromBGChangesVector( BackgroundChange &change, std::vector<RS
 		RString tmp = aBGChangeValues[7];
 		tmp.MakeLower();
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
-			&& !false) //    && !PREFSMAN->m_bQuirksMode )	barry edit: use default value
+			&& !PREFSMAN->m_bQuirksMode )
 		{
 			return false;
 		}
@@ -1007,7 +1007,7 @@ bool SMLoader::LoadFromBGChangesVector( BackgroundChange &change, std::vector<RS
 		RString tmp = aBGChangeValues[1];
 		tmp.MakeLower();
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
-		   && !false) //    && !PREFSMAN->m_bQuirksMode )	barry edit: use default value
+			&& !PREFSMAN->m_bQuirksMode )
 		{
 			return false;
 		}
