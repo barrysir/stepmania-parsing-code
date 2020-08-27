@@ -1,11 +1,82 @@
-# smparser
-A Stepmania file parsing/writing library built from Stepmania's source code. Emphasis on parsing accuracy and support for any parsing performed by Stepmania. Currently just the Stepmania source code made to compile standalone and some helper classes, maybe eventually it'll be a custom parser using the Stepmania code.
+# stepmania-parsing-code
 
-Check out the wiki! [link](https://github.com/barrysir/smparser/wiki)
+### **[Check out the wiki!](https://github.com/barrysir/smparser/wiki)**
+
+The bits of Stepmania's source code related to simfile parsing, made to compile standalone. Good if you need perfectly accurate file parsing.
 
 Still WIP, not all functions work, sorry about that.
 
-I'm no professional at C++, I've probably made some weird choices while wrangling the code in this library. If you find anything that could be improved let me know.
+I'm not a C++ programmer, I've probably made some weird choices while making this library, if you find anything that could be improved let me know.
+
+## Feature list
+ * SM, SSC file parsing/saving
+ * Song directory parsing (chooses which simfile to load from the directory)
+ * .lrc parsing
+ * Radar value calculation
+ * Functions for editing simfiles
+
+## Requirements
+ * C++17 (mostly because of `std::filesystem`)
+ * CMake (3.15 or higher)
+
+## Compiling
+
+If you know CMake you probably know what to do better than me.
+```
+cmake .. -G (generator type) -DCMAKE_BUILD_TYPE=(Release, Debug, whatever)
+```
+ I'm a newbie to CMake myself, and I'll write what I do to compile it which I'll put at the bottom of this readme to avoid clutter.
+
+Stepmania CMake scripts support MSVC, APPLE, and UNIX.
+
+## Usage
+
+CMake will generate a static library `libsmparser.a` for linking. Includes are found in the `src/` directory (this mimics Stepmania's codebase style). You can call the Stepmania code directly, or included in the library are some helper functions I've written, found under the `smparser` prefixed files.
+  * `smparser.h`: contains a RAII style class to initialize all the Stepmania global variables
+  * `smparser_SimfileLoader.h`: helper class to provide a clean interface for loading/saving simfiles
+  
+Check the scripts under `examples/` for sample usage.
+
+```c++
+#include <iostream>
+#include "smparser.h"
+#include "smparser_SimfileLoader.h"
+
+int main() {
+  SMParserLibrary smparserlibrary;  // initialize global variables
+  SimfileLoader loader;
+  Song s;
+  bool success = loader.LoadFromFile("simfile.sm", s);
+  if (success) {
+    std::cout << s.GetMainTitle() << std::endl;
+  }
+  return 0;
+}
+```
+
+## Gotchas
+
+### Global variables
+Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`.
+
+### File path format
+If you're calling the Stepmania code directly, there are a couple of gotchas to the filepath format:
+ * All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`)
+ * Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
+ * Paths must not be relative (starting dots `../asdfasdf` are not allowed)
+
+You don't have to worry about this with `SimfileLoader`, it will clean paths for you, or you can use `SimfileLoader::CleanPath` yourself.
+
+<!-- ### Radar value calculation
+
+Radar values require the song length from the audio file, which may be an expensive operation you don't want to do. 
+
+going to add a flag to toggle this on/off
+
+-->
+
+
+## Todo
 
  * headers have `using namespace std;` pollution, might fix later
  * sort the CMake source lists
@@ -22,66 +93,6 @@ I'm no professional at C++, I've probably made some weird choices while wranglin
  * ~~lyric file parsing~~
  * optimize the executable size?
  * don't output RageLog messages to std::cout, or have it toggleable
-
-## Requirements
- * C++17 (for `std::filesystem` mostly)
- * CMake (3.15 or higher)
-
-## Compiling
-
-At least I'm a newbie with CMake, so here's what I use to compile it (for my reference too)
- * Say your current directory is at the top-level folder of the repository.
- * Create a `build/` folder -- this isn't a necessary step, but otherwise the build files will be placed with the source files and it's not easy to clean up
- * Change directory into the `build/` folder
- * Run `cmake .. -G (generator) -DCMAKE_BUILD_TYPE=Release`. cmake will read from `..` (which is the top-level directory since we're in `build/`) and put all the makefiles within the current directory, `build/`.
-   * `(generator)` is the kind of project file/makefile you use to compile. My generator is "MSYS Makefiles" since I'm using MinGW/MSYS.
-   * `CMAKE_BUILD_TYPE` is "Debug", "Release", etc. It doesn't have to specifically be Release, set it to whatever. If you're changing this you know the effects better than I do.
- * Use the generated files to compile it (I just type `make`).
- * I hope it works for you.
-
-```
-cd build
-cmake .. -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release
-make
-```
-
-Stepmania CMake scripts natively supports Windows, Mac, and Unix.
-
-## Usage
-
-CMake will generate a static library `libsmparser.a` for linking. Includes are found in the `src/` directory (this mimics Stepmania's codebase style).
-
-Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`. Once the variables are initialized you can call the Stepmania code yourself, or use the few helper functions I've made under the `smparser_` prefixed files (`smparser_SimfileLoader.h`).
-
-If you're calling the Stepmania code directly, there are a couple of gotchas to the filepath format:
- * All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`)
- * Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
- * Paths must not be relative (starting dots `../asdfasdf` are not allowed)
-
-You don't have to worry about this with `SimfileLoader`, it will clean paths for you.
-
-Example of SMParserLibrary use:
-```c++
-#include "smparser.h"
-
-int main() {
-  SMParserLibrary smparserlibrary;
-
-  // ... do stuff ...
-  function();
-  // ... do stuff ...
-
-  return 0;
-  // global pointers automatically cleaned up
-}
-
-void function() {
-  // can initialize it multiple times, will not re-initialize the global variables
-  SMParserLibrary smparserlibrary;
-  // ... do stuff ...
-}
-```
-
 
 ## Changelist
 I'm starting to notate where I've modified the original code, Ctrl-F `barry edit` to find stuff I've changed. It can get annoyingly spammy in places but I can't think of a better way and I'd rather have the comments than not.
@@ -152,3 +163,21 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * include path changed from "mad.h" to "../extern/mad-0.15.1b/mad.h"
  * RageSoundReader_Vorbis:
    * add include to RageException
+
+## Compiling - more detailed
+```
+# (starting at the top-level folder)
+mkdir build
+cd build
+cmake .. -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+ * Say your current directory is at the top-level folder of the repository.
+ * Create a `build/` folder -- this isn't a necessary step, but otherwise the build files will be mixed with the source files and it's not easy to clean up
+ * Change directory into the `build/` folder
+ * Run `cmake .. -G (generator) -DCMAKE_BUILD_TYPE=Release`. cmake will read from `..` (which is the top-level directory since we're in `build/`) and put all the makefiles within the current directory, `build/`.
+   * `(generator)` is the kind of project file/makefile you use to compile. My generator is "MSYS Makefiles" since I'm using MinGW/MSYS.
+   * `CMAKE_BUILD_TYPE` is "Debug", "Release", etc. It doesn't have to specifically be Release, set it to whatever. If you're changing this you know the effects better than I do.
+ * Use the generated files to compile it (I just type `make`).
+ * I hope it works for you.
