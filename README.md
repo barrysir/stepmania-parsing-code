@@ -94,6 +94,12 @@ going to add a flag to toggle this on/off
  * optimize the executable size?
  * don't output RageLog messages to std::cout, or have it toggleable
 
+### Adding a new file type
+
+ * directory parsing: change NotesLoader.cpp
+ * simfile parsing: change SimfileLoader::Load
+ * simfile saving: change SimfileLoader::Save
+
 ## Changelist
 I'm starting to notate where I've modified the original code, Ctrl-F `barry edit` to find stuff I've changed. It can get annoyingly spammy in places but I can't think of a better way and I'd rather have the comments than not.
 
@@ -163,6 +169,11 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * include path changed from "mad.h" to "../extern/mad-0.15.1b/mad.h"
  * RageSoundReader_Vorbis:
    * add include to RageException
+ * GameInput:
+   * commented out everything except the GameButton, GameController enums and a couple of functions
+ * RageUtil_CharConversions:
+   * removed an include to `#include "archutils/Win32/ErrorStrings.h"`, taking the needed function and putting it inside CharConversions
+   * I don't even know if this works TBH. It compiles and executes at least.
 
 ## Compiling - more detailed
 ```

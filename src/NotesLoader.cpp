@@ -3,7 +3,7 @@
 #include "NotesLoaderSM.h"
 // #include "NotesLoaderSMA.h"
 #include "NotesLoaderSSC.h"
-// #include "NotesLoaderDWI.h"
+#include "NotesLoaderDWI.h"
 // #include "NotesLoaderBMS.h"
 // #include "NotesLoaderKSF.h"
 #include "RageUtil.h"
@@ -47,9 +47,9 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	loaderSM.GetApplicableFiles( sPath, list );
 	if (!list.empty() )
 		return loaderSM.LoadFromDir( sPath, out );
-	// DWILoader::GetApplicableFiles( sPath, list );
-	// if( !list.empty() )
-	// 	return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );
+	DWILoader::GetApplicableFiles( sPath, list );
+	if( !list.empty() )
+		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );
 	// BMSLoader::GetApplicableFiles( sPath, list );
 	// if( !list.empty() )
 	// 	return BMSLoader::LoadFromDir( sPath, out );

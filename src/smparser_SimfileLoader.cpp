@@ -3,6 +3,7 @@
 #include "NotesLoader.h"
 #include "NotesLoaderSSC.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderDWI.h"
 #include "NotesWriterSM.h"
 #include "NotesWriterSSC.h"
 #include <unordered_map>
@@ -102,9 +103,9 @@ std::string SimfileLoader::GetFileLoadedFromDir(const std::string &_dirpath) {
 	if (!list.empty() )
         return list[0];
 
-	// DWILoader::GetApplicableFiles( sPath, list );
-	// if( !list.empty() )
-	// 	return list[0];
+	DWILoader::GetApplicableFiles( dirpath, list );
+	if( !list.empty() )
+		return list[0];
     
 	// BMSLoader::GetApplicableFiles( sPath, list );
 	// if( !list.empty() )
@@ -156,8 +157,10 @@ bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType forma
                 success = loader.LoadFromSimfile(filepath, out);
             }
             break;
-        case SMA:
         case DWI:
+            // DWI doesn't support loading from a single simfile!!
+            // need to do this myself
+        case SMA:
         case BMS:
         case KSF:
         case JSON:
