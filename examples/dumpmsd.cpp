@@ -18,6 +18,7 @@ void print_msd(const MsdFile &m) {
 
 void test_msdfile(const std::string &filepath) {
     MsdFile m;
+    // old code, doing it by hand instead of using SimfileLoader
     // std::string filepath = SimfileLoader().CleanPath(_filepath, false);
     // m.ReadFile(filepath, true);
     

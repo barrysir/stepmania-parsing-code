@@ -69,8 +69,10 @@ std::string SimfileLoader::GetExtensionFromType(FileType type) {
 }
 
 std::string SimfileLoader::CleanPath(const std::string &path, bool as_directory) {
+    // convert to absolute path
+    std::filesystem::path absolute = std::filesystem::absolute(std::filesystem::path(path));
     // replace backslashes with slashes? maybe there's a better way
-    std::string slashed = std::filesystem::path(path).generic_string();
+    std::string slashed = absolute.generic_string();
     // append a trailing slash, if this path is supposed to be a directory
     if (as_directory && slashed.back() != '/') {
         slashed.push_back('/');

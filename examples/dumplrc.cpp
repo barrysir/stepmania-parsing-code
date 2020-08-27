@@ -15,8 +15,7 @@ void print_lrc(const Song &s) {
 }
 
 void test_lrcfile(const std::string &_filepath) {
-    SimfileLoader sltemp;
-    std::string filepath = sltemp.CleanPath(_filepath, false);
+    std::string filepath = SimfileLoader::CleanPath(_filepath, false);
     if (filepath != _filepath) {
         std::cerr << "Note: filepath was cleaned! If you're calling this from code make sure there aren't any backslashes or anything. " << _filepath << " -> " << filepath << std::endl;
     }
