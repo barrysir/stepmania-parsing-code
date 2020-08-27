@@ -8,6 +8,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 
+set(SM_EXTERN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern")
+
 include(CMakeMacros.cmake)
 include(DefineOptions.cmake)
 

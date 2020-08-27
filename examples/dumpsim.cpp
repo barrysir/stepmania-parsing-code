@@ -99,6 +99,7 @@ void print_song(const Song &s, bool long_paths = false) {
     std::cout << "Offset: " << s.m_SongTiming.m_fBeat0OffsetInSeconds << std::endl;
     std::cout << "Sample start: " << s.m_fMusicSampleStartSeconds << std::endl;
     std::cout << "Sample length: " << s.m_fMusicSampleLengthSeconds << std::endl;
+    std::cout << "Music Length: " << s.m_fMusicLengthSeconds << std::endl;
     std::cout << FIFTY_DASHES << std::endl;
 
     std::cout << "Selectable: " << 

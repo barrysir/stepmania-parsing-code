@@ -150,3 +150,5 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * removed dependency on theme to get the default colour, default colour can be passed in as an argument to the lyric parser
  * RageSoundReader_MP3:
    * include path changed from "mad.h" to "../extern/mad-0.15.1b/mad.h"
+ * RageSoundReader_Vorbis:
+   * add include to RageException

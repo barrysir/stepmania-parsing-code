@@ -6,5 +6,4 @@ option(WITH_WAV "Build with WAV Support." ON)
 option(WITH_MP3 "Build with MP3 Support." ON)
 
 # Turn this option off to disable using OGG files with the game.
-# turned off until the OGG libraries are added
-option(WITH_OGG "Build with OGG/Vorbis Support." OFF)
+option(WITH_OGG "Build with OGG/Vorbis Support." ON)

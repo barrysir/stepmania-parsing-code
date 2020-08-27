@@ -4,6 +4,9 @@
 #include "RageSoundReader_Vorbisfile.h"
 #include "RageLog.h"
 
+// barry edit: missing include
+#include "RageException.h"
+
 #if defined(INTEGER_VORBIS)
 #include <tremor/ivorbisfile.h>
 #else
