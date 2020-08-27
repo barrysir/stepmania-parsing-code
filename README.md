@@ -24,10 +24,31 @@ I'm no professional at C++, I've probably made some weird choices while wranglin
  * don't output RageLog messages to std::cout, or have it toggleable
 
 ## Requirements
- * C++17 (`std::filesystem` mostly)
- * CMake
+ * C++17 (for `std::filesystem` mostly)
+ * CMake (3.15 or higher)
+
+## Compiling
+
+At least I'm a newbie with CMake, so here's what I use to compile it (for my reference too)
+ * Say your current directory is at the top-level folder of the repository.
+ * Create a `build/` folder -- this isn't a necessary step, but otherwise the build files will be placed with the source files and it's not easy to clean up
+ * Change directory into the `build/` folder
+ * Run `cmake .. -G (generator) -DCMAKE_BUILD_TYPE=Release`. cmake will read from `..` (which is the top-level directory since we're in `build/`) and put all the makefiles within the current directory, `build/`.
+   * `(generator)` is the kind of project file/makefile you use to compile. My generator is "MSYS Makefiles" since I'm using MinGW/MSYS.
+   * `CMAKE_BUILD_TYPE` is "Debug", "Release", etc. It doesn't have to specifically be Release, set it to whatever. If you're changing this you know the effects better than I do.
+ * Use the generated files to compile it (I just type `make`).
+ * I hope it works for you.
+
+```
+cd build
+cmake .. -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+Stepmania CMake scripts natively supports Windows, Mac, and Unix.
 
 ## Usage
+
 CMake will generate a static library `libsmparser.a` for linking. Includes are found in the `src/` directory (this mimics Stepmania's codebase style).
 
 Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`. Once the variables are initialized you can call the Stepmania code yourself, or use the few helper functions I've made under the `smparser_` prefixed files (`smparser_SimfileLoader.h`).
@@ -35,6 +56,7 @@ Stepmania has a few global variables that have to be initialized before using th
 If you're calling the Stepmania code directly, there are a couple of gotchas to the filepath format:
  * All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`)
  * Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
+ * Paths must not be relative (starting dots `../asdfasdf` are not allowed)
 
 You don't have to worry about this with `SimfileLoader`, it will clean paths for you.
 
@@ -126,3 +148,5 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * limited number of filetypes currently supported
  * LyricsLoader:
    * removed dependency on theme to get the default colour, default colour can be passed in as an argument to the lyric parser
+ * RageSoundReader_MP3:
+   * include path changed from "mad.h" to "../extern/mad-0.15.1b/mad.h"

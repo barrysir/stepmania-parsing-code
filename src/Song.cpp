@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteData.h"
-// #include "RageSoundReader_FileReader.h"
+#include "RageSoundReader_FileReader.h"
 // #include "RageSurface_Load.h"
 // #include "SongCacheIndex.h"
 #include "GameManager.h"
@@ -636,70 +636,66 @@ void FixupPath( RString &path, const RString &sSongPath )
 // Songs in BlacklistImages will never be autodetected as song images.
 void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 {
-	// barry edit - not implemented yet
-	return;
+	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
+	ASSERT_M(m_sSongDir.Left(3) != "../", m_sSongDir); // meaningless
+	FixupPath(m_sSongDir, "");
+	FixupPath(m_sMusicFile, m_sSongDir);
+	FOREACH_ENUM(InstrumentTrack, i)
+	{ if(!m_sInstrumentTrackFile[i].empty())
+		{ FixupPath(m_sInstrumentTrackFile[i], m_sSongDir); }	}
+	FixupPath(m_sBannerFile, m_sSongDir);
+	FixupPath(m_sJacketFile, m_sSongDir);
+	FixupPath(m_sCDFile, m_sSongDir);
+	FixupPath(m_sDiscFile, m_sSongDir);
+	FixupPath(m_sLyricsFile, m_sSongDir);
+	FixupPath(m_sBackgroundFile, m_sSongDir);
+	FixupPath(m_sCDTitleFile, m_sSongDir);
 
+	CHECKPOINT_M("Looking for images...");
 
-// 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
-// 	ASSERT_M(m_sSongDir.Left(3) != "../", m_sSongDir); // meaningless
-// 	FixupPath(m_sSongDir, "");
-// 	FixupPath(m_sMusicFile, m_sSongDir);
-// 	FOREACH_ENUM(InstrumentTrack, i)
-// 	{ if(!m_sInstrumentTrackFile[i].empty())
-// 		{ FixupPath(m_sInstrumentTrackFile[i], m_sSongDir); }	}
-// 	FixupPath(m_sBannerFile, m_sSongDir);
-// 	FixupPath(m_sJacketFile, m_sSongDir);
-// 	FixupPath(m_sCDFile, m_sSongDir);
-// 	FixupPath(m_sDiscFile, m_sSongDir);
-// 	FixupPath(m_sLyricsFile, m_sSongDir);
-// 	FixupPath(m_sBackgroundFile, m_sSongDir);
-// 	FixupPath(m_sCDTitleFile, m_sSongDir);
+	m_SongTiming.TidyUpData(false);
 
-// 	CHECKPOINT_M("Looking for images...");
+	for (Steps *s : m_vpSteps)
+	{
+		s->m_Timing.TidyUpData(true);
+	}
 
-// 	m_SongTiming.TidyUpData(false);
+	if(!from_cache)
+	{
+		if (this->m_sArtist == "The Dancing Monkeys Project" && this->m_sMainTitle.find_first_of('-') != string::npos)
+		{
+			// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
+			vector<RString> titleParts;
+			split(this->m_sMainTitle, "-", titleParts);
+			this->m_sArtist = titleParts.front();
+			Trim(this->m_sArtist);
+			titleParts.erase(titleParts.begin());
+			this->m_sMainTitle = join("-", titleParts);
+			Trim(this->m_sMainTitle);
+		}
 
-// 	for (Steps *s : m_vpSteps)
-// 	{
-// 		s->m_Timing.TidyUpData(true);
-// 	}
+		Trim(m_sMainTitle);
+		Trim(m_sSubTitle);
+		Trim(m_sArtist);
 
-// 	if(!from_cache)
-// 	{
-// 		if (this->m_sArtist == "The Dancing Monkeys Project" && this->m_sMainTitle.find_first_of('-') != string::npos)
-// 		{
-// 			// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
-// 			vector<RString> titleParts;
-// 			split(this->m_sMainTitle, "-", titleParts);
-// 			this->m_sArtist = titleParts.front();
-// 			Trim(this->m_sArtist);
-// 			titleParts.erase(titleParts.begin());
-// 			this->m_sMainTitle = join("-", titleParts);
-// 			Trim(this->m_sMainTitle);
-// 		}
+		// Fall back on the song directory name.
+		if(m_sMainTitle == "")
+		{
+			NotesLoader::GetMainAndSubTitlesFromFullTitle(
+				Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle);
+		}
 
-// 		Trim(m_sMainTitle);
-// 		Trim(m_sSubTitle);
-// 		Trim(m_sArtist);
+		if(m_sArtist == "")
+		{ m_sArtist = "Unknown artist"; }
+		TranslateTitles();
 
-// 		// Fall back on the song directory name.
-// 		if(m_sMainTitle == "")
-// 		{
-// 			NotesLoader::GetMainAndSubTitlesFromFullTitle(
-// 				Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle);
-// 		}
-
-// 		if(m_sArtist == "")
-// 		{ m_sArtist = "Unknown artist"; }
-// 		TranslateTitles();
-
-// 		// Set the has flags before tidying so that tidying can check them instead
-// 		// of using the has functions that hit the disk. -Kyz
-// 		// These will be written to cache, for Song::LoadFromSongDir to use later.
-// 		m_bHasMusic = HasMusic();
-// 		m_bHasBanner = HasBanner();
-// 		m_bHasBackground = HasBackground();
-
+		// Set the has flags before tidying so that tidying can check them instead
+		// of using the has functions that hit the disk. -Kyz
+		// These will be written to cache, for Song::LoadFromSongDir to use later.
+		m_bHasMusic = HasMusic();
+		m_bHasBanner = HasBanner();
+		m_bHasBackground = HasBackground();
+	
 // 		// barry edit - comment ImageDir stuff
 // 		// for( RString Image : ImageDir )
 // 		// {
@@ -780,103 +776,104 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 // 				}
 // 			}
 // 		}
-// 		// This must be done before radar calculation.
-// 		if(m_bHasMusic)
-// 		{
-// 			RString error;
-// 			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetMusicPath(), error);
-// 			/* XXX: Checking if the music file exists eliminates a warning
-// 			 * originating from BMS files (which have no music file, per se)
-// 			 * but it's something of a hack. */
-// 			if(Sample == nullptr && m_sMusicFile != "")
-// 			{
-// 				LOG->UserLog("Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str());
 
-// 				// Don't use this file.
-// 				m_sMusicFile = "";
-// 			}
-// 			else if(Sample != nullptr)
-// 			{
-// 				m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
-// 				delete Sample;
+		// This must be done before radar calculation.
+		if(m_bHasMusic)
+		{
+			RString error;
+			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetMusicPath(), error);
+			/* XXX: Checking if the music file exists eliminates a warning
+			 * originating from BMS files (which have no music file, per se)
+			 * but it's something of a hack. */
+			if(Sample == nullptr && m_sMusicFile != "")
+			{
+				LOG->UserLog("Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str());
 
-// 				if(m_fMusicLengthSeconds < 0)
-// 				{
-// 					// It failed; bad file or something. It's already logged a warning.
-// 					m_fMusicLengthSeconds = 100; // guess
-// 				}
-// 				else if(m_fMusicLengthSeconds == 0)
-// 				{
-// 					LOG->UserLog("Sound file", GetMusicPath(), "is empty.");
-// 				}
-// 			}
-// 		}
-// 		else	// ! HasMusic()
-// 		{
-// 			m_fMusicLengthSeconds = 100; // guess
-// 			LOG->UserLog("Song",
-// 				GetSongDir(),
-// 				"has no music file; guessing at %f seconds",
-// 				m_fMusicLengthSeconds);
-// 		}
-// 		if(m_fMusicLengthSeconds < 0)
-// 		{
-// 			LOG->UserLog("Sound file",
-// 				GetMusicPath(),
-// 				"has a negative length %f.",
-// 				m_fMusicLengthSeconds);
-// 			m_fMusicLengthSeconds = 0;
-// 		}
-// 		if(!m_PreviewFile.empty() && m_fMusicSampleLengthSeconds <= 0.00f) { // if there's a preview file and sample length isn't specified, set sample length to length of preview file
-// 			RString error;
-// 			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
-// 			if(Sample == nullptr && m_sMusicFile != "")
-// 			{
-// 				LOG->UserLog("Sound file", GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str());
+				// Don't use this file.
+				m_sMusicFile = "";
+			}
+			else if(Sample != nullptr)
+			{
+				m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
+				delete Sample;
 
-// 				// Don't use this file.
-// 				m_PreviewFile = "";
-// 				m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
-// 			}
-// 			else if(Sample != nullptr)
-// 			{
-// 				m_fMusicSampleLengthSeconds = Sample->GetLength() / 1000.0f;
-// 				delete Sample;
+				if(m_fMusicLengthSeconds < 0)
+				{
+					// It failed; bad file or something. It's already logged a warning.
+					m_fMusicLengthSeconds = 100; // guess
+				}
+				else if(m_fMusicLengthSeconds == 0)
+				{
+					LOG->UserLog("Sound file", GetMusicPath(), "is empty.");
+				}
+			}
+		}
+		else	// ! HasMusic()
+		{
+			m_fMusicLengthSeconds = 100; // guess
+			LOG->UserLog("Song",
+				GetSongDir(),
+				"has no music file; guessing at %f seconds",
+				m_fMusicLengthSeconds);
+		}
+		if(m_fMusicLengthSeconds < 0)
+		{
+			LOG->UserLog("Sound file",
+				GetMusicPath(),
+				"has a negative length %f.",
+				m_fMusicLengthSeconds);
+			m_fMusicLengthSeconds = 0;
+		}
+		if(!m_PreviewFile.empty() && m_fMusicSampleLengthSeconds <= 0.00f) { // if there's a preview file and sample length isn't specified, set sample length to length of preview file
+			RString error;
+			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
+			if(Sample == nullptr && m_sMusicFile != "")
+			{
+				LOG->UserLog("Sound file", GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str());
 
-// 				if(m_fMusicSampleLengthSeconds < 0)
-// 				{
-// 					// It failed; bad file or something. It's already logged a warning.
-// 					m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
-// 				}
-// 				else if(m_fMusicSampleLengthSeconds == 0)
-// 				{
-// 					LOG->UserLog("Sound file", GetPreviewMusicPath(), "is empty.");
-// 				}
-// 			}
-// 		} else { // no preview file, calculate sample from music as normal
+				// Don't use this file.
+				m_PreviewFile = "";
+				m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
+			}
+			else if(Sample != nullptr)
+			{
+				m_fMusicSampleLengthSeconds = Sample->GetLength() / 1000.0f;
+				delete Sample;
 
-// 			if(m_fMusicSampleStartSeconds == -1 ||
-// 				m_fMusicSampleLengthSeconds == 0 ||
-// 				m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
-// 			{
-// 				const TimingData &timing = this->m_SongTiming;
-// 				m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat(100);
+				if(m_fMusicSampleLengthSeconds < 0)
+				{
+					// It failed; bad file or something. It's already logged a warning.
+					m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
+				}
+				else if(m_fMusicSampleLengthSeconds == 0)
+				{
+					LOG->UserLog("Sound file", GetPreviewMusicPath(), "is empty.");
+				}
+			}
+		} else { // no preview file, calculate sample from music as normal
 
-// 				if(m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
-// 				{
-// 					// Attempt to get a reasonable default.
-// 					int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->GetLastSecond())/2);
-// 					iBeat -= iBeat%4;
-// 					m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat((float)iBeat);
-// 				}
-// 			}
+			if(m_fMusicSampleStartSeconds == -1 ||
+				m_fMusicSampleLengthSeconds == 0 ||
+				m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
+			{
+				const TimingData &timing = this->m_SongTiming;
+				m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat(100);
 
-// 			// The old logic meant that you couldn't have sample lengths that go forever,
-// 			// e.g. those in Donkey Konga. I never liked that. -freem
-// 			if(m_fMusicSampleLengthSeconds <= 0.00f)
-// 			{ m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH; }
+				if(m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
+				{
+					// Attempt to get a reasonable default.
+					int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->GetLastSecond())/2);
+					iBeat -= iBeat%4;
+					m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat((float)iBeat);
+				}
+			}
 
-// 		}
+			// The old logic meant that you couldn't have sample lengths that go forever,
+			// e.g. those in Donkey Konga. I never liked that. -freem
+			if(m_fMusicSampleLengthSeconds <= 0.00f)
+			{ m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH; }
+
+		}
 
 // 		if(!HasLyrics())
 // 		{
@@ -1119,17 +1116,17 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 // 		// (except for edits). We should be able to use difficulty names as
 // 		// unique identifiers for steps. */
 // 		SongUtil::AdjustDuplicateSteps(this);
-// 	}
+	}
 
-// 	/* Generate these before we autogen notes, so the new notes can inherit
-// 	 * their source's values. */
-// 	ReCalculateRadarValuesAndLastSecond(from_cache, true);
-// 	// If the music length is suspiciously shorter than the last second, adjust
-// 	// the length.  This prevents the ogg patch from setting a false length. -Kyz
-// 	if(m_fMusicLengthSeconds < lastSecond - 10.0f)
-// 	{
-// 		m_fMusicLengthSeconds= lastSecond;
-// 	}
+	/* Generate these before we autogen notes, so the new notes can inherit
+	 * their source's values. */
+	ReCalculateRadarValuesAndLastSecond(from_cache, true);
+	// If the music length is suspiciously shorter than the last second, adjust
+	// the length.  This prevents the ogg patch from setting a false length. -Kyz
+	if(m_fMusicLengthSeconds < lastSecond - 10.0f)
+	{
+		m_fMusicLengthSeconds= lastSecond;
+	}
 }
 
 void Song::TranslateTitles()

@@ -72,6 +72,10 @@
 // /** @brief Set a checkpoint with a specified message. */
 // #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
+// barry edit - don't do anything
+#define CHECKPOINT
+#define CHECKPOINT_M(m)
+
 
 // /**
 //  * @brief Define a macro to tell the compiler that a function doesn't return.

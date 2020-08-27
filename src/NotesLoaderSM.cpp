@@ -1347,7 +1347,11 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			bg.push_back( BackgroundChange(lastBeat,song.m_sBackgroundFile) );
 		} while(0);
 	}
-	if (bFromCache)
+	// barry edit: smparser sets bFromCache to false by default
+	// set it so TidyUpData is called in this case
+	// IDK if this is the right way to do it
+	// if (bFromCache)
+	if (!bFromCache)
 	{
 		song.TidyUpData( bFromCache, true );
 	}

@@ -3,7 +3,10 @@
 #include "RageFile.h"
 
 
-RageFileObjStd::RageFileObjStd(const RString &path, std::fstream &filestream) : m_sPath(path) {
+RageFileObjStd::RageFileObjStd(const RString &path, int mode, std::fstream &filestream):
+    m_sPath(path),
+    m_iMode(mode)
+{
     std::swap(fs, filestream);
 
     auto curpos = fs.tellg();
@@ -50,6 +53,27 @@ RageFileBasic *RageFileDriverStd::Open( const RString &sPath, int mode, int &err
     if (!fs) {
         return nullptr;
     }
-    RageFileObjStd *file = new RageFileObjStd(sPath, fs);
+    RageFileObjStd *file = new RageFileObjStd(sPath, mode, fs);
+    return file;
+}
+
+RageFileBasic *RageFileObjStd::Copy() const {
+    int mode = m_iMode;
+    RString sPath = m_sPath;
+
+    std::ios::openmode flags = std::ios::binary;
+    if (mode & RageFile::READ) {
+        flags |= std::fstream::in;
+    }
+    if (mode & RageFile::WRITE) {
+        flags |= std::fstream::out;
+    }
+    std::fstream fs(sPath, flags);
+    if (!fs) {
+        throw std::runtime_error("could not copy RageFileObjStd");
+        return nullptr;
+    }
+    RageFileObjStd *file = new RageFileObjStd(sPath, mode, fs);
+    file->Seek(Tell());     // i hope this works
     return file;
 }
