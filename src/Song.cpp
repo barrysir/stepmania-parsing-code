@@ -1120,7 +1120,8 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
-	ReCalculateRadarValuesAndLastSecond(from_cache, true);
+	// barry edit - this must be set to false, or notedata will be wiped
+	ReCalculateRadarValuesAndLastSecond(from_cache, false);
 	// If the music length is suspiciously shorter than the last second, adjust
 	// the length.  This prevents the ogg patch from setting a false length. -Kyz
 	if(m_fMusicLengthSeconds < lastSecond - 10.0f)

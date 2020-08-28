@@ -146,6 +146,7 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * commented stuff relating to ImageDir -- some cache-y performance stuff, not relevant to us
    * calls to FILEMAN->GetDirListingWithMultipleExtensions have been replaced with GetDirListingWithMultipleExtensions
    * added getters for the Steps* vectors
+   * `ReCalculateRadarValuesAndLastSecond(from_cache, true);` -> `ReCalculateRadarValuesAndLastSecond(from_cache, false);` because false wipes the notedata
  * `SongUtil.h`, `SongUtil.cpp`:
    * Removed implementations for everything except the `SongUtil::GetStepsXXX` methods
  * the RageFile library has been heavily stripped down

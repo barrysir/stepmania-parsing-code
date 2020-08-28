@@ -6,6 +6,7 @@
 #include "NotesLoaderDWI.h"
 #include "NotesWriterSM.h"
 #include "NotesWriterSSC.h"
+#include "NotesWriterDWI.h"
 #include <unordered_map>
 #include <algorithm>
 #include <filesystem>
@@ -229,7 +230,8 @@ bool SimfileLoader::Save(const std::string &_filepath, Song &out, FileType forma
             return SaveToSSCFile(filepath, out);
         case SM:
             return SaveToSMFile(filepath, out);
-        case DWI:   // not implemented yet
+        case DWI:
+            return NotesWriterDWI::Write(filepath, out);
         case JSON:  // not implemented yet
             return false;
         case SMA:   // not supported
