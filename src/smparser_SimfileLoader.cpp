@@ -118,7 +118,7 @@ std::string SimfileLoader::GetFileLoadedFromDir(const std::string &_dirpath) {
     return "";
 }
 
-bool SimfileLoader::LoadFromDir(const std::string &_filepath, Song &out) {
+bool SimfileLoader::LoadFromDir(const std::string &_filepath, Song &out, bool tidyupdata) {
     // clean filepath
     std::string filepath = CleanPath(_filepath, true);
 
@@ -129,10 +129,14 @@ bool SimfileLoader::LoadFromDir(const std::string &_filepath, Song &out) {
     if (!success) {
         out.SetSongDir(oldSongDir);
     }
+    if (success && tidyupdata) {
+        // must have from_cache=false (or !from_cache == true)
+        out.TidyUpData(false, false);
+    }
     return success;
 }
 
-bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType format) {
+bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType format, bool tidyupdata) {
     // clean filepath
     std::string filepath = CleanPath(_filepath, false);
 
@@ -142,26 +146,26 @@ bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType forma
 
     bool success = false;
     auto oldSongDir = out.GetSongDir();
-    out.SetSongDir(std::filesystem::path(filepath).parent_path().generic_string() + '/');
+    out.SetSongDir(CleanPath(std::filesystem::path(filepath).parent_path().generic_string(), true));
 
     switch (format)
     {
         case SSC:
             {
                 SSCLoader loader;
-                success = loader.LoadFromSimfile(filepath, out);
+                success = loader.LoadFromSimfile(filepath, out); // will not run TidyUpData
             }
             break;
         case SM:
             {
                 SMLoader loader;
-                success = loader.LoadFromSimfile(filepath, out);
+                success = loader.LoadFromSimfile(filepath, out); // will not run TidyUpData
             }
             break;
         case DWI:
             {
                 // custom function
-                success = DWILoader::LoadFromSimfile(filepath, out);
+                success = DWILoader::LoadFromSimfile(filepath, out); // will not run TidyUpData
             }
             break;
         case SMA:
@@ -174,6 +178,11 @@ bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType forma
             return false;
     };
 
+    // run song tidyupdata
+    if (success && tidyupdata) {
+        // must have from_cache=false (or !from_cache == true)
+        out.TidyUpData(false, false);
+    }
     if (!success) {
         out.SetSongDir(oldSongDir);
     }

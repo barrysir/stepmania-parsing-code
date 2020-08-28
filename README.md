@@ -9,7 +9,7 @@ Still WIP, not all functions work, sorry about that.
 I'm not a C++ programmer, I've probably made some weird choices while making this library, if you find anything that could be improved let me know.
 
 ## Feature list
- * SM, SSC file parsing/saving
+ * SM, SSC, DWI file parsing/saving
  * Song directory parsing (chooses which simfile to load from the directory)
  * .lrc parsing
  * Radar value calculation
@@ -54,27 +54,30 @@ int main() {
 }
 ```
 
-## Gotchas
+## Quirks
 
 ### Global variables
-Stepmania has a few global variables that have to be initialized before using the library. I've written a RAII class to manage these, `SMParserLibrary`, found under `smparser.h`.
+Stepmania has a few global variables that have to be initialized before using the library. You can use the `SMParserLibrary` class found under `smparser.h` to manage these.
 
 ### File path format
 If you're calling the Stepmania code directly, there are a couple of gotchas to the filepath format:
  * All paths to the parsing library must be given in **forward slashes**. (`path/to/file.txt`, not `path\to\file.txt`)
- * Directory paths must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
- * Paths must not be relative (starting dots `../asdfasdf` are not allowed)
+ * Paths pointing to a directory must have a **trailing slash**. (`path/to/folder/` not `path/to/folder`)
+ * Additionally, **song paths** must not be relative, but audio files/images/etc. are ok to be relative.
 
 You don't have to worry about this with `SimfileLoader`, it will clean paths for you, or you can use `SimfileLoader::CleanPath` yourself.
 
-<!-- ### Radar value calculation
+### TidyUpData
+Songs have a TidyUpData() function which
+ * Cleans filepaths, title/artist fields, ...
+ * Looks through the files in the song folder and attempts to fill in image/audio tags, if the fields are blank
+ * Calculates the music length by reading the audio file (this is used in radar calculations)
+ * Calculates radar values
 
-Radar values require the song length from the audio file, which may be an expensive operation you don't want to do. 
+This is a lossy, potentially costly operation you may not want to do. `SimfileLoader::Load` or `SimfileLoader::LoadFromDir` will call TidyUpData by default, but you can turn this off using the `tidyupdata` boolean (at the cost of some parsing accuracy).
 
-going to add a flag to toggle this on/off
-
--->
-
+### Radar value calculation
+Radar values are NOT read by the parser, instead Stepmania recalculates them when TidyUpData is called. At the moment there is no way to get the parser to read the radar values, but in the future I might hack in some code to parse them and a flag to enable/disable it.
 
 ## Todo
 
@@ -84,7 +87,7 @@ going to add a flag to toggle this on/off
  * write documentation
  * (SimfileLoader) set Song::m_sSongDir when loading from file paths
  * add parsing radar values
- * add calculating radar values (need to get the length of the audio file... maybe could deduce length from radar values?)
+ * ~~add calculating radar values (need to get the length of the audio file... maybe could deduce length from radar values?)~~
  * fix NoteData::GetNumTapNotes and related functions (uses GAMESTATE->GetProcessedTimingData)
  * add the rest of the SM file formats
  * better error messages

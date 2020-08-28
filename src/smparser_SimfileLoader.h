@@ -48,11 +48,13 @@ public:
  ************************************/
     // rule: LoadFromFile(GetFileLoadedFromDir(path), s) <=> LoadFromDir(path, s)
 
-    bool LoadFromDir(const std::string &dirpath, Song &out);
-    bool Load(const std::string &filepath, Song &out, FileType format = DEFAULT);
+    bool LoadFromDir(const std::string &dirpath, Song &out, bool tidyupdata = true);
+    bool Load(const std::string &filepath, Song &out, FileType format = DEFAULT, bool tidyupdata = true);
     bool Save(const std::string &filepath, Song &out, FileType format = DEFAULT);
-    bool LoadFromFile(const std::string &filepath, Song &out, FileType format = DEFAULT) {  // alias for Load
-        return Load(filepath, out, format);
+
+    // alias for Load
+    bool LoadFromFile(const std::string &filepath, Song &out, FileType format = DEFAULT, bool tidyupdata = true) {
+        return Load(filepath, out, format, tidyupdata);
     }
 
     // msd parsing
