@@ -519,8 +519,6 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	return false;
 }
 
-#include <iostream>
-
 bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &BlacklistedImages )
 {
 	vector<RString> aFileNames;
@@ -535,7 +533,17 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 	/* We should have exactly one; if we had none, we shouldn't have been called to begin with. */
 	ASSERT( aFileNames.size() == 1 );
 	const RString sPath = sPath_ + aFileNames[0];
+	return DWILoader::LoadFromSimfile(sPath, out, BlacklistedImages);
+}
 
+bool DWILoader::LoadFromSimfile( const RString &sPath, Song &out) {
+	set<RString> BlacklistedImages; 	// dummy variable
+	return DWILoader::LoadFromSimfile(sPath, out, BlacklistedImages);
+}
+
+#include <iostream>
+
+bool DWILoader::LoadFromSimfile( const RString &sPath, Song &out, set<RString> &BlacklistedImages ) {
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
 
 	MsdFile msd;
@@ -558,8 +566,6 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			LOG->UserLog( "Song file", sPath, "has tag \"%s\" with no parameters.", sValueName.c_str() );
 			continue;
 		}
-
-		std::cout << sValueName << std::endl;
 
 		// handle the data
 		if( sValueName.EqualsNoCase("FILE") )

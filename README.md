@@ -174,6 +174,8 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
  * RageUtil_CharConversions:
    * removed an include to `#include "archutils/Win32/ErrorStrings.h"`, taking the needed function and putting it inside CharConversions
    * I don't even know if this works TBH. It compiles and executes at least.
+ * NotesLoaderDWI:
+   * coded `DWILoader::LoadFromSimfile` myself, refactored `DWILoader::LoadFromDir` to use `LoadFromSimfile`
 
 ## Compiling - more detailed
 ```

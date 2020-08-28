@@ -158,8 +158,11 @@ bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType forma
             }
             break;
         case DWI:
-            // DWI doesn't support loading from a single simfile!!
-            // need to do this myself
+            {
+                // custom function
+                success = DWILoader::LoadFromSimfile(filepath, out);
+            }
+            break;
         case SMA:
         case BMS:
         case KSF:

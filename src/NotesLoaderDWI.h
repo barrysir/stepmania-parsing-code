@@ -25,6 +25,16 @@ namespace DWILoader
 	 * @return its success or failure.
 	 */
 	bool LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages );
+
+	// barry edit: custom function!!
+	/**
+	 * @brief Attempt to load the specified simfile.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a reference to the Song that will retrieve the song information.
+	 * @return its success or failure.
+	 */
+	bool LoadFromSimfile( const RString &sPath, Song &out);
+	bool LoadFromSimfile( const RString &sPath, Song &out, set<RString> &BlacklistedImages );
 	
 	bool LoadNoteDataFromSimfile( const RString &path, Steps &out );
 }

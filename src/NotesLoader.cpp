@@ -61,7 +61,7 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	// KSFLoader::GetApplicableFiles( sPath, list );
 	// if( !list.empty() )
 	// 	return KSFLoader::LoadFromDir( sPath, out );
-	// return false;
+	return false;
 }
 
 
