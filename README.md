@@ -75,10 +75,23 @@ Songs have a TidyUpData() function which
  * Calculates the music length by reading the audio file (this is used in radar calculations)
  * Calculates radar values
 
-This is a lossy, potentially costly operation you may not want to do. `SimfileLoader::Load` or `SimfileLoader::LoadFromDir` will call TidyUpData by default, but you can turn this off using the `tidyupdata` boolean (at the cost of some parsing accuracy).
+This is a potentially costly operation you may not want to do. `SimfileLoader::Load` or `SimfileLoader::LoadFromDir` will call TidyUpData by default, but you can turn this off using the `tidyupdata` boolean (at the cost of some parsing accuracy).
 
 ### Radar value calculation
 Radar values are NOT read by the parser, instead Stepmania recalculates them when TidyUpData is called. At the moment there is no way to get the parser to read the radar values, but in the future I might hack in some code to parse them and a flag to enable/disable it.
+
+### `NoteData` and `GAMESTATE->GetProcessedTimingData`
+Some functions in `NoteData` access a `TimingData` instance through the `GAMESTATE->GetProcessedTimingData` pointer, the pointer must be set through `GAMESTATE->SetProcessedTimingData` beforehand or you may get some pointer shenanigans. (Setting `GAMESTATE->SetProcessedTimingData` before working with `NoteData` is a common pattern throughout the Stepmania codebase.) I can't see an easy workaround for this, so unfortunately that's how it is for now.
+```c++
+void fiddleWithNoteData(Steps *s) {
+  NoteData nd = s->GetNoteData();
+  // nd.GetNumTapNotes()                        // this will segfault because the timing data was not set
+  GAMESTATE->SetProcessedTimingData(s->getTimingData());
+  int numNotes = nd.GetNumTapNotes();           // now it's safe
+  /* ... do stuff with nd ... */
+  GAMESTATE->SetProcessedTimingData(nullptr);   // set back to null for courtesy
+}
+```
 
 ## Todo
 
@@ -86,10 +99,10 @@ Radar values are NOT read by the parser, instead Stepmania recalculates them whe
  * sort the CMake source lists
  * finish the dumper script
  * write documentation
- * (SimfileLoader) set Song::m_sSongDir when loading from file paths
+ * ~~(SimfileLoader) set Song::m_sSongDir when loading from file paths~~
  * add parsing radar values
  * ~~add calculating radar values (need to get the length of the audio file... maybe could deduce length from radar values?)~~
- * fix NoteData::GetNumTapNotes and related functions (uses GAMESTATE->GetProcessedTimingData)
+ * ~~fix NoteData::GetNumTapNotes and related functions (uses GAMESTATE->GetProcessedTimingData)~~ 
  * add the rest of the SM file formats
  * better error messages
  * add parsing options to SimfileLoader
