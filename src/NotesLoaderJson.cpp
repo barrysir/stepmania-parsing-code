@@ -21,13 +21,19 @@ static void Deserialize( TimingSegment *seg, const Json::Value &root )
 	{
 		case SEGMENT_BPM:
 		{
+			// barry edit - added beat parsing
+			float fBeat = root["Beat"].asDouble();
 			float fBPM = root["BPM"].asDouble();
+			static_cast<BPMSegment *>(seg)->SetBeat(fBeat);
 			static_cast<BPMSegment *>(seg)->SetBPM(fBPM);
 			break;
 		}
 		case SEGMENT_STOP:
 		{
+			// barry edit - added beat parsing
+			float fBeat = root["Beat"].asDouble();
 			float fStop = root["Seconds"].asDouble();
+			static_cast<BPMSegment *>(seg)->SetBeat(fBeat);
 			static_cast<StopSegment *>(seg)->SetPause(fStop);
 			break;
 		}
@@ -109,7 +115,9 @@ static void Deserialize( TapNote &o, const Json::Value &root )
 
 static void Deserialize( StepsType st, NoteData &nd, const Json::Value &root )
 {
-	int iTracks = nd.GetNumTracks();
+	// barry edit: heyo, i think this is a bug, will always return 0 and crash?
+	// int iTracks = nd.GetNumTracks();
+	int iTracks = GAMEMAN->GetStepsTypeInfo(st).iNumTracks;
 	nd.SetNumTracks( iTracks );
 	for( unsigned i=0; i<root.size(); i++ )
 	{

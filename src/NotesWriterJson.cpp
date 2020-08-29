@@ -104,7 +104,9 @@ static void Serialize( const RadarValues &o, Json::Value &root )
 
 static void Serialize( const Steps &o, Json::Value &root )
 {
-	root["StepsType"] = StringConversion::ToString(o.m_StepsType);
+	// barry edit: not correctly parsed on the Loader side because StringConversion does some weird capitalization and formatting
+	// root["StepsType"] = StringConversion::ToString(o.m_StepsType);
+	root["StepsType"] = GAMEMAN->GetStepsTypeInfo(o.m_StepsType).szName;
 
 	o.Decompress();
 

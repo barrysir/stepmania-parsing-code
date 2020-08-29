@@ -10,6 +10,7 @@ I'm not a C++ programmer, I've probably made some weird choices while making thi
 
 ## Feature list
  * SM, SSC, DWI file parsing/saving
+ * JSON parsing/saving (note: buggy)
  * Song directory parsing (chooses which simfile to load from the directory)
  * .lrc parsing
  * Radar value calculation
@@ -183,6 +184,11 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * coded `DWILoader::LoadFromSimfile` myself, refactored `DWILoader::LoadFromDir` to use `LoadFromSimfile`
  * JsonUtil:
    * comment out Dialog code
+ * NotesLoaderJson:
+   * number of tracks not correctly calculated
+   * bpms/stops loaded incorrectly
+ * NotesWriterJSON:
+   * StepsType saved in a way the loader doesn't understand
 
 ## Compiling - more detailed
 ```
