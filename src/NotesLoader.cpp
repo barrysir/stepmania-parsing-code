@@ -6,6 +6,8 @@
 #include "NotesLoaderDWI.h"
 // #include "NotesLoaderBMS.h"
 // #include "NotesLoaderKSF.h"
+// barry edit: json
+#include "NotesLoaderJson.h"
 #include "RageUtil.h"
 
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
@@ -61,6 +63,13 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	// KSFLoader::GetApplicableFiles( sPath, list );
 	// if( !list.empty() )
 	// 	return KSFLoader::LoadFromDir( sPath, out );
+
+	// barry edit: JSON parsing
+	NotesLoaderJson::GetApplicableFiles(sPath, list);
+    if (!list.empty()) {
+		const RString filepath = sPath + list[0];
+		return NotesLoaderJson::LoadFromDir(filepath, out);	
+	}
 	return false;
 }
 

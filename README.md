@@ -102,6 +102,7 @@ Radar values are NOT read by the parser, instead Stepmania recalculates them whe
  * directory parsing: change NotesLoader.cpp
  * simfile parsing: change SimfileLoader::Load
  * simfile saving: change SimfileLoader::Save
+ * change SimfileLoader::GetFileLoadedFromDir
 
 ## Changelist
 I'm starting to notate where I've modified the original code, Ctrl-F `barry edit` to find stuff I've changed. It can get annoyingly spammy in places but I can't think of a better way and I'd rather have the comments than not.
@@ -180,6 +181,8 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * I don't even know if this works TBH. It compiles and executes at least.
  * NotesLoaderDWI:
    * coded `DWILoader::LoadFromSimfile` myself, refactored `DWILoader::LoadFromDir` to use `LoadFromSimfile`
+ * JsonUtil:
+   * comment out Dialog code
 
 ## Compiling - more detailed
 ```

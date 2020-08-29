@@ -1,6 +1,7 @@
 include(CMakeProject-lua.cmake)
 include(CMakeProject-pcre.cmake)
 include(CMakeProject-libtomcrypt.cmake)
+include(CMakeProject-json.cmake)
 
 if(HAS_MP3)
     include(CMakeProject-mad.cmake)

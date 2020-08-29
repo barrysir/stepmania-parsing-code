@@ -4,9 +4,11 @@
 #include "NotesLoaderSSC.h"
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
+#include "NotesLoaderJson.h"
 #include "NotesWriterSM.h"
 #include "NotesWriterSSC.h"
 #include "NotesWriterDWI.h"
+#include "NotesWriterJson.h"
 #include <unordered_map>
 #include <algorithm>
 #include <filesystem>
@@ -40,6 +42,7 @@ SimfileLoader::FileType SimfileLoader::GetTypeFromFilename(const std::string &fi
         {"bml", BMS},
         {"bme", BMS},
         {"pms", BMS},
+        {"json", JSON}
         // {"edit", ??},
         // {"ats", ??}
     };
@@ -114,7 +117,12 @@ std::string SimfileLoader::GetFileLoadedFromDir(const std::string &_dirpath) {
 
 	// KSFLoader::GetApplicableFiles( sPath, list );
 	// if( !list.empty() )
-	// 	return list[0];    
+	// 	return list[0];
+
+    NotesLoaderJson::GetApplicableFiles(dirpath, list);
+    if (!list.empty())
+        return list[0];
+    
     return "";
 }
 
@@ -122,7 +130,7 @@ bool SimfileLoader::LoadFromDir(const std::string &_filepath, Song &out, bool ti
     // clean filepath
     std::string filepath = CleanPath(_filepath, true);
 
-    static std::set<RString> blacklist;
+    std::set<RString> blacklist;
     auto oldSongDir = out.GetSongDir();
     out.SetSongDir(filepath);
     bool success = NotesLoader::LoadFromDir(filepath, out, blacklist);
@@ -168,10 +176,14 @@ bool SimfileLoader::Load(const std::string &_filepath, Song &out, FileType forma
                 success = DWILoader::LoadFromSimfile(filepath, out); // will not run TidyUpData
             }
             break;
+        case JSON:
+            {
+                success = NotesLoaderJson::LoadFromJsonFile(filepath, out); // will not run TidyUpData
+            }
+            break;
         case SMA:
         case BMS:
         case KSF:
-        case JSON:
         case NONE:
             return false;
         default:
@@ -242,7 +254,7 @@ bool SimfileLoader::Save(const std::string &_filepath, Song &out, FileType forma
         case DWI:
             return NotesWriterDWI::Write(filepath, out);
         case JSON:  // not implemented yet
-            return false;
+            return NotesWriterJson::WriteSong(filepath, out, true);
         case SMA:   // not supported
             return false;
         case BMS:   // not supported
