@@ -199,12 +199,11 @@ public:
 	// barry edit - comment because it uses RageFile
 	// RString GetFileHash();
 
-	// barry edit - comment because it accesses PREFMAN
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit*
 	 * below. Otherwise, they return the main titles. */
-	// RString GetDisplayMainTitle() const;
-	// RString GetDisplaySubTitle() const;
-	// RString GetDisplayArtist() const;
+	RString GetDisplayMainTitle() const;
+	RString GetDisplaySubTitle() const;
+	RString GetDisplayArtist() const;
 	RString GetMainTitle() const;
 
 	/**
@@ -230,8 +229,7 @@ public:
 	}
 
 	// "title subtitle"
-	// barry edit - comment because it accesses PREFMAN
-	// RString GetDisplayFullTitle() const;
+	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
 
 	/** @brief The version of the song/file. */

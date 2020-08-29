@@ -1,5 +1,7 @@
 #include "global.h"
 #include "SongUtil.h"
+// barry edit: missing include
+#include "StepsUtil.h"
 #include "Song.h"
 #include "Steps.h"
 #include "Style.h"
@@ -381,94 +383,94 @@ Steps* SongUtil::GetStepsByCredit( const Song *pSong, StepsType st, RString sCre
 // }
 
 
-// /* Make any duplicate difficulties edits.  (Note that BMS files do a first pass
-//  * on this; see BMSLoader::SlideDuplicateDifficulties.) */
-// void SongUtil::AdjustDuplicateSteps( Song *pSong )
-// {
-// 	FOREACH_ENUM( StepsType, st )
-// 	{
-// 		FOREACH_ENUM( Difficulty, dc )
-// 		{
-// 			if( dc == Difficulty_Edit )
-// 				continue;
+/* Make any duplicate difficulties edits.  (Note that BMS files do a first pass
+ * on this; see BMSLoader::SlideDuplicateDifficulties.) */
+void SongUtil::AdjustDuplicateSteps( Song *pSong )
+{
+	FOREACH_ENUM( StepsType, st )
+	{
+		FOREACH_ENUM( Difficulty, dc )
+		{
+			if( dc == Difficulty_Edit )
+				continue;
 
-// 			vector<Steps*> vSteps;
-// 			SongUtil::GetSteps( pSong, vSteps, st, dc );
+			vector<Steps*> vSteps;
+			SongUtil::GetSteps( pSong, vSteps, st, dc );
 
-// 			/* Delete steps that are completely identical.  This happened due to a
-// 			 * bug in an earlier version. */
-// 			DeleteDuplicateSteps( pSong, vSteps );
+			/* Delete steps that are completely identical.  This happened due to a
+			 * bug in an earlier version. */
+			DeleteDuplicateSteps( pSong, vSteps );
 
-// 			const RString &songTitle = pSong->GetDisplayFullTitle();
-// 			CHECKPOINT_M(ssprintf("Duplicate steps from %s removed.", songTitle.c_str()));
-// 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-// 			CHECKPOINT_M(ssprintf("Charts from %s sorted.", songTitle.c_str()));
-// 			for( unsigned k=1; k<vSteps.size(); k++ )
-// 			{
-// 				vSteps[k]->SetDifficulty( Difficulty_Edit );
-// 				if( vSteps[k]->GetDescription() == "" )
-// 				{
-// 					/* "Hard Edit" */
-// 					RString EditName = Capitalize( DifficultyToString(dc) ) + " Edit";
-// 					vSteps[k]->SetDescription( EditName );
-// 				}
-// 			}
-// 		}
+			const RString &songTitle = pSong->GetDisplayFullTitle();
+			CHECKPOINT_M(ssprintf("Duplicate steps from %s removed.", songTitle.c_str()));
+			StepsUtil::SortNotesArrayByDifficulty( vSteps );
+			CHECKPOINT_M(ssprintf("Charts from %s sorted.", songTitle.c_str()));
+			for( unsigned k=1; k<vSteps.size(); k++ )
+			{
+				vSteps[k]->SetDifficulty( Difficulty_Edit );
+				if( vSteps[k]->GetDescription() == "" )
+				{
+					/* "Hard Edit" */
+					RString EditName = Capitalize( DifficultyToString(dc) ) + " Edit";
+					vSteps[k]->SetDescription( EditName );
+				}
+			}
+		}
 
-// 		/* XXX: Don't allow edits to have descriptions that look like regular difficulties.
-// 		 * These are confusing, and they're ambiguous when passed to GetStepsByID. */
-// 	}
-// }
-// /**
-//  * @brief Remove the initial whitespace characters.
-//  * @param s the string to left trim.
-//  * @return the trimmed string.
-//  */
-// static RString RemoveInitialWhitespace( RString s )
-// {
-// 	size_t i = s.find_first_not_of(" \t\r\n");
-// 	if( i != s.npos )
-// 		s.erase( 0, i );
-// 	return s;
-// }
+		/* XXX: Don't allow edits to have descriptions that look like regular difficulties.
+		 * These are confusing, and they're ambiguous when passed to GetStepsByID. */
+	}
+}
+/**
+ * @brief Remove the initial whitespace characters.
+ * @param s the string to left trim.
+ * @return the trimmed string.
+ */
+static RString RemoveInitialWhitespace( RString s )
+{
+	size_t i = s.find_first_not_of(" \t\r\n");
+	if( i != s.npos )
+		s.erase( 0, i );
+	return s;
+}
 
-// /* This is called within TidyUpData, before autogen notes are added. */
-// void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
-// {
-// 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
-// 	 * same m_sDescription, m_sCredit, m_iMeter and SMNoteData. */
-// 	for( unsigned i=0; i<vSteps.size(); i++ )
-// 	{
-// 		const Steps *s1 = vSteps[i];
+/* This is called within TidyUpData, before autogen notes are added. */
+void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
+{
+	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
+	 * same m_sDescription, m_sCredit, m_iMeter and SMNoteData. */
+	for( unsigned i=0; i<vSteps.size(); i++ )
+	{
+		const Steps *s1 = vSteps[i];
 
-// 		for( unsigned j=i+1; j<vSteps.size(); j++ )
-// 		{
-// 			const Steps *s2 = vSteps[j];
+		for( unsigned j=i+1; j<vSteps.size(); j++ )
+		{
+			const Steps *s2 = vSteps[j];
 
-// 			if( s1->GetDescription() != s2->GetDescription() )
-// 				continue;
-// 			if( s1->GetCredit() != s2->GetCredit() )
-// 				continue;
-// 			if( s1->GetMeter() != s2->GetMeter() )
-// 				continue;
-// 			/* Compare, ignoring whitespace. */
-// 			RString sSMNoteData1;
-// 			s1->GetSMNoteData( sSMNoteData1 );
-// 			RString sSMNoteData2;
-// 			s2->GetSMNoteData( sSMNoteData2 );
-// 			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
-// 				continue;
+			if( s1->GetDescription() != s2->GetDescription() )
+				continue;
+			if( s1->GetCredit() != s2->GetCredit() )
+				continue;
+			if( s1->GetMeter() != s2->GetMeter() )
+				continue;
+			/* Compare, ignoring whitespace. */
+			RString sSMNoteData1;
+			s1->GetSMNoteData( sSMNoteData1 );
+			RString sSMNoteData2;
+			s2->GetSMNoteData( sSMNoteData2 );
+			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
+				continue;
 
-// 			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\", step author \"%s\", and meter \"%i\"",
-// 				s2, pSong->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetCredit().c_str(), s1->GetMeter() );
+			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\", step author \"%s\", and meter \"%i\"",
+				s2, pSong->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetCredit().c_str(), s1->GetMeter() );
 				
-// 			pSong->DeleteSteps( s2, false );
+			pSong->DeleteSteps( s2, false );
 
-// 			vSteps.erase(vSteps.begin()+j);
-// 			--j;
-// 		}
-// 	}
-// }
+			vSteps.erase(vSteps.begin()+j);
+			--j;
+		}
+	}
+}
 
 
 // /////////////////////////////////////
@@ -1233,20 +1235,21 @@ Steps* SongUtil::GetStepsByCredit( const Song *pSong, StepsType st, RString sCre
 // // SongID
 // //////////////////////////////////
 
-// void SongID::FromSong( const Song *p )
-// {
-// 	if( p )
-// 		sDir = p->GetSongDir();
-// 	else
-// 		sDir = "";
+void SongID::FromSong( const Song *p )
+{
+	if( p )
+		sDir = p->GetSongDir();
+	else
+		sDir = "";
 
-// 	// HACK for backwards compatibility:
-// 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
-// 	if( sDir.Left(1) == "/" )
-// 		sDir.erase( sDir.begin() );
+	// HACK for backwards compatibility:
+	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
+	if( sDir.Left(1) == "/" )
+		sDir.erase( sDir.begin() );
 
-// 	m_Cache.Unset();
-// }
+	// barry edit: comment cache
+	// m_Cache.Unset();
+}
 
 // Song *SongID::ToSong() const
 // {

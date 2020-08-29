@@ -14,6 +14,8 @@ public:
 public:
     /** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;
+	Preference<bool>	m_bShowNativeLanguage;
+	Preference<bool>	m_bAutogenSteps;
 };
 
 extern PrefsManager*	PREFSMAN;	// global and accessible from anywhere in our program

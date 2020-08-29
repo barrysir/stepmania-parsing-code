@@ -110,6 +110,9 @@ void fiddleWithNoteData(Steps *s) {
  * ~~lyric file parsing~~
  * optimize the executable size?
  * don't output RageLog messages to std::cout, or have it toggleable
+ * add XML
+ * add CachedObject
+ * add image loading (for TidyUpData)
 
 ### Adding a new file type
 
@@ -160,13 +163,12 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * commented out everything except `CryptManager::GetMD5ForString`, `CryptManager::GetSHA1ForString`
  * `Song.h`, `Song.cpp`:
    * commented functions: ReloadFromSongDir, HasAutosaveFile, LoadAutosaveFile
-   * TranslateTitles
    * commented stuff relating to ImageDir -- some cache-y performance stuff, not relevant to us
    * calls to FILEMAN->GetDirListingWithMultipleExtensions have been replaced with GetDirListingWithMultipleExtensions
    * added getters for the Steps* vectors
    * `ReCalculateRadarValuesAndLastSecond(from_cache, true);` -> `ReCalculateRadarValuesAndLastSecond(from_cache, false);` because false wipes the notedata
  * `SongUtil.h`, `SongUtil.cpp`:
-   * Removed implementations for everything except the `SongUtil::GetStepsXXX` methods
+   * Only a few functions available
  * the RageFile library has been heavily stripped down
    * RageFileDriverStd is custom code which uses the standard library for file I/O
    * RageFileBasic is unmodified
@@ -202,6 +204,10 @@ I'm starting to notate where I've modified the original code, Ctrl-F `barry edit
    * bpms/stops loaded incorrectly
  * NotesWriterJSON:
    * StepsType saved in a way the loader doesn't understand
+ * PrefsManager:
+   * heavily stripped down, only a few preferences available
+ * StepsUtil:
+   * bunch of functions commented because of reliance on SONGMAN, PROFILEMAN, UNLOCKMAN, CachedObject, ...
 
 ## Compiling - more detailed
 ```

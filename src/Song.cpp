@@ -8,7 +8,7 @@
 // #include "RageSurface_Load.h"
 // #include "SongCacheIndex.h"
 #include "GameManager.h"
-// #include "PrefsManager.h"
+#include "PrefsManager.h"
 #include "Style.h"
 // #include "FontCharAliases.h"
 // #include "TitleSubstitution.h"
@@ -702,80 +702,80 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 // 		// 	IMAGECACHE->LoadImage( Image, GetCacheFile( Image ) );
 // 		// }
 
-// 		// There are several things that need to find a file from the dir with a
-// 		// particular extension or type of extension.  So fetch a list of all
-// 		// files in the dir once, then split that list into the different things
-// 		// we need. -Kyz
-// 		vector<RString> song_dir_listing;
-// 		FILEMAN->GetDirListing(m_sSongDir + "*", song_dir_listing, false, false);
-// 		vector<RString> music_list;
-// 		vector<RString> image_list;
-// 		vector<RString> movie_list;
-// 		vector<RString> lyric_list;
-// 		vector<RString> lyric_extensions(1, "lrc");
-// 		// Using a pair didn't work, so these two vectors have to be kept in
-// 		// sync instead. -Kyz
-// 		vector<vector<RString>*> lists_to_fill;
-// 		vector<const vector<RString>*> fill_exts;
-// 		lists_to_fill.reserve(4);
-// 		fill_exts.reserve(4);
-// 		lists_to_fill.push_back(&music_list);
-// 		fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Sound));
-// 		// Disable bg and banner images and movies for custom songs.  Loading
-// 		// them takes too long. -Kyz
-// 		if(m_LoadedFromProfile == ProfileSlot_Invalid)
-// 		{
-// 			lists_to_fill.push_back(&image_list);
-// 			fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Bitmap));
-// 			lists_to_fill.push_back(&movie_list);
-// 			fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Movie));
-// 		}
-// 		lists_to_fill.push_back(&lyric_list);
-// 		fill_exts.push_back(&lyric_extensions);
-// 		for(vector<RString>::iterator filename= song_dir_listing.begin();
-// 				filename != song_dir_listing.end(); ++filename)
-// 		{
-// 			bool matched_something= false;
-// 			RString file_ext= GetExtension(*filename).MakeLower();
-// 			if(!file_ext.empty())
-// 			{
-// 				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
-// 				{
-// 					for(vector<RString>::const_iterator ext= fill_exts[tf]->begin();
-// 							ext != fill_exts[tf]->end(); ++ext)
-// 					{
-// 						if(file_ext == *ext)
-// 						{
-// 							lists_to_fill[tf]->push_back(*filename);
-// 							matched_something= true;
-// 							break;
-// 						}
-// 					}
-// 					if(matched_something)
-// 					{
-// 						break;
-// 					}
-// 				}
-// 			}
-// 		}
+		// There are several things that need to find a file from the dir with a
+		// particular extension or type of extension.  So fetch a list of all
+		// files in the dir once, then split that list into the different things
+		// we need. -Kyz
+		vector<RString> song_dir_listing;
+		GetDirListing(m_sSongDir + "*", song_dir_listing, false, false);
+		vector<RString> music_list;
+		vector<RString> image_list;
+		vector<RString> movie_list;
+		vector<RString> lyric_list;
+		vector<RString> lyric_extensions(1, "lrc");
+		// Using a pair didn't work, so these two vectors have to be kept in
+		// sync instead. -Kyz
+		vector<vector<RString>*> lists_to_fill;
+		vector<const vector<RString>*> fill_exts;
+		lists_to_fill.reserve(4);
+		fill_exts.reserve(4);
+		lists_to_fill.push_back(&music_list);
+		fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Sound));
+		// Disable bg and banner images and movies for custom songs.  Loading
+		// them takes too long. -Kyz
+		if(m_LoadedFromProfile == ProfileSlot_Invalid)
+		{
+			lists_to_fill.push_back(&image_list);
+			fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Bitmap));
+			lists_to_fill.push_back(&movie_list);
+			fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Movie));
+		}
+		lists_to_fill.push_back(&lyric_list);
+		fill_exts.push_back(&lyric_extensions);
+		for(vector<RString>::iterator filename= song_dir_listing.begin();
+				filename != song_dir_listing.end(); ++filename)
+		{
+			bool matched_something= false;
+			RString file_ext= GetExtension(*filename).MakeLower();
+			if(!file_ext.empty())
+			{
+				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
+				{
+					for(vector<RString>::const_iterator ext= fill_exts[tf]->begin();
+							ext != fill_exts[tf]->end(); ++ext)
+					{
+						if(file_ext == *ext)
+						{
+							lists_to_fill[tf]->push_back(*filename);
+							matched_something= true;
+							break;
+						}
+					}
+					if(matched_something)
+					{
+						break;
+					}
+				}
+			}
+		}
 
-// 		if(!m_bHasMusic)
-// 		{
-// 			// If the first song is "intro", and we have more than one available,
-// 			// don't use it--it's probably a KSF intro music file, which we don't
-// 			// (yet) support.
-// 			if(!music_list.empty())
-// 			{
-// 				LOG->Trace("Song '%s' points to a music file that doesn't exist, found music file '%s'", m_sSongDir.c_str(), music_list[0].c_str());
-// 				m_bHasMusic= true;
-// 				m_sMusicFile= music_list[0];
-// 				if(music_list.size() > 1 &&
-// 					!m_sMusicFile.Left(5).CompareNoCase("intro"))
-// 				{
-// 					m_sMusicFile= music_list[1];
-// 				}
-// 			}
-// 		}
+		if(!m_bHasMusic)
+		{
+			// If the first song is "intro", and we have more than one available,
+			// don't use it--it's probably a KSF intro music file, which we don't
+			// (yet) support.
+			if(!music_list.empty())
+			{
+				LOG->Trace("Song '%s' points to a music file that doesn't exist, found music file '%s'", m_sSongDir.c_str(), music_list[0].c_str());
+				m_bHasMusic= true;
+				m_sMusicFile= music_list[0];
+				if(music_list.size() > 1 &&
+					!m_sMusicFile.Left(5).CompareNoCase("intro"))
+				{
+					m_sMusicFile= music_list[1];
+				}
+			}
+		}
 
 		// This must be done before radar calculation.
 		if(m_bHasMusic)
@@ -875,97 +875,97 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 		}
 
-// 		if(!HasLyrics())
-// 		{
-// 			// Check if there is a lyric file in here
-// 			if(!lyric_list.empty())
-// 			{
-// 				m_sLyricsFile= lyric_list[0];
-// 			}
-// 		}
+		if(!HasLyrics())
+		{
+			// Check if there is a lyric file in here
+			if(!lyric_list.empty())
+			{
+				m_sLyricsFile= lyric_list[0];
+			}
+		}
 
-// 		// Since banner, bg, and cdtitle are disabled for custom songs, don't try
-// 		// to find them. -Kyz
-// 		if(m_LoadedFromProfile == ProfileSlot_Invalid)
-// 		{
-// 			// Here's the problem:  We have a directory full of images. We want to
-// 			// determine which image is the banner, which is the background, and
-// 			// which is the CDTitle.
+		// Since banner, bg, and cdtitle are disabled for custom songs, don't try
+		// to find them. -Kyz
+		if(m_LoadedFromProfile == ProfileSlot_Invalid)
+		{
+			// Here's the problem:  We have a directory full of images. We want to
+			// determine which image is the banner, which is the background, and
+			// which is the CDTitle.
 
-// 			// For blank args to FindFirstFilenameContaining. -Kyz
-// 			vector<RString> empty_list;
+			// For blank args to FindFirstFilenameContaining. -Kyz
+			vector<RString> empty_list;
 
-// 			bool has_jacket= HasJacket();
-// 			bool has_cdimage= HasCDImage();
-// 			bool has_disc= HasDisc();
-// 			bool has_cdtitle= HasCDTitle();
+			bool has_jacket= HasJacket();
+			bool has_cdimage= HasCDImage();
+			bool has_disc= HasDisc();
+			bool has_cdtitle= HasCDTitle();
 
-// 			// First, check the file name for hints.
-// 			if(!m_bHasBanner)
-// 			{
-// 				/* If a nonexistant banner file is specified, and we can't find a
-// 				 * replacement, don't wipe out the old value. */
-// 				//m_sBannerFile = "";
+			// First, check the file name for hints.
+			if(!m_bHasBanner)
+			{
+				/* If a nonexistant banner file is specified, and we can't find a
+				 * replacement, don't wipe out the old value. */
+				//m_sBannerFile = "";
 
-// 				// find an image with "banner" in the file name
-// 				vector<RString> contains(1, "banner");
-// 				/* Some people do things differently for the sake of being different.
-// 				 * Don't match eg. abnormal, numbness. */
-// 				vector<RString> ends_with(1, " bn");
-// 				m_bHasBanner= FindFirstFilenameContaining(image_list,
-// 					m_sBannerFile, empty_list, contains, ends_with);
-// 			}
+				// find an image with "banner" in the file name
+				vector<RString> contains(1, "banner");
+				/* Some people do things differently for the sake of being different.
+				 * Don't match eg. abnormal, numbness. */
+				vector<RString> ends_with(1, " bn");
+				m_bHasBanner= FindFirstFilenameContaining(image_list,
+					m_sBannerFile, empty_list, contains, ends_with);
+			}
 
-// 			if(!m_bHasBackground)
-// 			{
-// 				//m_sBackgroundFile = "";
+			if(!m_bHasBackground)
+			{
+				//m_sBackgroundFile = "";
 
-// 				// find an image with "bg" or "background" in the file name
-// 				vector<RString> contains(1, "background");
-// 				vector<RString> ends_with(1, "bg");
-// 				m_bHasBackground= FindFirstFilenameContaining(image_list,
-// 					m_sBackgroundFile, empty_list, contains, ends_with);
-// 			}
+				// find an image with "bg" or "background" in the file name
+				vector<RString> contains(1, "background");
+				vector<RString> ends_with(1, "bg");
+				m_bHasBackground= FindFirstFilenameContaining(image_list,
+					m_sBackgroundFile, empty_list, contains, ends_with);
+			}
 
-// 			if(!has_jacket)
-// 			{
-// 				// find an image with "jacket" or "albumart" in the filename.
-// 				vector<RString> starts_with(1, "jk_");
-// 				vector<RString> contains;
-// 				contains.reserve(2);
-// 				contains.push_back("jacket");
-// 				contains.push_back("albumart");
-// 				has_jacket= FindFirstFilenameContaining(image_list,
-// 					m_sJacketFile, starts_with, contains, empty_list);
-// 			}
+			if(!has_jacket)
+			{
+				// find an image with "jacket" or "albumart" in the filename.
+				vector<RString> starts_with(1, "jk_");
+				vector<RString> contains;
+				contains.reserve(2);
+				contains.push_back("jacket");
+				contains.push_back("albumart");
+				has_jacket= FindFirstFilenameContaining(image_list,
+					m_sJacketFile, starts_with, contains, empty_list);
+			}
 
-// 			if(!has_cdimage)
-// 			{
-// 				// CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
-// 				// find an image with "-cd" at the end of the filename.
-// 				vector<RString> ends_with(1, "-cd");
-// 				has_cdimage= FindFirstFilenameContaining(image_list,
-// 					m_sCDFile, empty_list, empty_list, ends_with);
-// 			}
+			if(!has_cdimage)
+			{
+				// CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
+				// find an image with "-cd" at the end of the filename.
+				vector<RString> ends_with(1, "-cd");
+				has_cdimage= FindFirstFilenameContaining(image_list,
+					m_sCDFile, empty_list, empty_list, ends_with);
+			}
 
-// 			if(!has_disc)
-// 			{
-// 				// a rectangular graphic, not to be confused with CDImage above.
-// 				vector<RString> ends_with;
-// 				ends_with.reserve(2);
-// 				ends_with.push_back(" disc");
-// 				ends_with.push_back(" title");
-// 				has_disc= FindFirstFilenameContaining(image_list,
-// 					m_sDiscFile, empty_list, empty_list, ends_with);
-// 			}
+			if(!has_disc)
+			{
+				// a rectangular graphic, not to be confused with CDImage above.
+				vector<RString> ends_with;
+				ends_with.reserve(2);
+				ends_with.push_back(" disc");
+				ends_with.push_back(" title");
+				has_disc= FindFirstFilenameContaining(image_list,
+					m_sDiscFile, empty_list, empty_list, ends_with);
+			}
 
-// 			if(!has_cdtitle)
-// 			{
-// 				// find an image with "cdtitle" in the file name
-// 				vector<RString> contains(1, "cdtitle");
-// 				has_cdtitle= FindFirstFilenameContaining(image_list,
-// 					m_sCDTitleFile, empty_list, contains, empty_list);
-// 			}
+			if(!has_cdtitle)
+			{
+				// find an image with "cdtitle" in the file name
+				vector<RString> contains(1, "cdtitle");
+				has_cdtitle= FindFirstFilenameContaining(image_list,
+					m_sCDTitleFile, empty_list, contains, empty_list);
+			}
 
 // 			/* Now, For the images we still haven't found,
 // 			 * look at the image dimensions of the remaining unclassified images. */
@@ -1088,34 +1088,34 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 // 					continue;
 // 				}
 // 			}
-// 			// If no BGChanges are specified and there are movies in the song
-// 			// directory, then assume they are DWI style where the movie begins at
-// 			// beat 0.
-// 			if(!HasBGChanges())
-// 			{
-// 				/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
-// 				 * music starts. */
-// 				if(movie_list.size() == 1)
-// 				{
-// 					this->AddBackgroundChange(BACKGROUND_LAYER_1,
-// 						BackgroundChange(0, movie_list[0], "", 1.f,
-// 							SBE_StretchNoLoop));
-// 				}
-// 			}
-// 			// Clear fields for files that turned out to not exist.
-// #define CLEAR_NOT_HAS(has_name, field_name) if(!has_name) { field_name= ""; }
-// 			CLEAR_NOT_HAS(m_bHasBanner, m_sBannerFile);
-// 			CLEAR_NOT_HAS(m_bHasBackground, m_sBackgroundFile);
-// 			CLEAR_NOT_HAS(has_jacket, m_sJacketFile);
-// 			CLEAR_NOT_HAS(has_cdimage, m_sCDFile);
-// 			CLEAR_NOT_HAS(has_disc, m_sDiscFile);
-// 			CLEAR_NOT_HAS(has_cdtitle, m_sCDTitleFile);
-// #undef CLEAR_NOT_HAS
-// 		}
-// 		// Don't allow multiple Steps of the same StepsType and Difficulty
-// 		// (except for edits). We should be able to use difficulty names as
-// 		// unique identifiers for steps. */
-// 		SongUtil::AdjustDuplicateSteps(this);
+			// If no BGChanges are specified and there are movies in the song
+			// directory, then assume they are DWI style where the movie begins at
+			// beat 0.
+			if(!HasBGChanges())
+			{
+				/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
+				 * music starts. */
+				if(movie_list.size() == 1)
+				{
+					this->AddBackgroundChange(BACKGROUND_LAYER_1,
+						BackgroundChange(0, movie_list[0], "", 1.f,
+							SBE_StretchNoLoop));
+				}
+			}
+			// Clear fields for files that turned out to not exist.
+#define CLEAR_NOT_HAS(has_name, field_name) if(!has_name) { field_name= ""; }
+			CLEAR_NOT_HAS(m_bHasBanner, m_sBannerFile);
+			CLEAR_NOT_HAS(m_bHasBackground, m_sBackgroundFile);
+			CLEAR_NOT_HAS(has_jacket, m_sJacketFile);
+			CLEAR_NOT_HAS(has_cdimage, m_sCDFile);
+			CLEAR_NOT_HAS(has_disc, m_sDiscFile);
+			CLEAR_NOT_HAS(has_cdtitle, m_sCDTitleFile);
+#undef CLEAR_NOT_HAS
+		}
+		// Don't allow multiple Steps of the same StepsType and Difficulty
+		// (except for edits). We should be able to use difficulty names as
+		// unique identifiers for steps. */
+		SongUtil::AdjustDuplicateSteps(this);
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
@@ -1444,8 +1444,7 @@ void Song::AddAutoGenNotes()
 			continue;
 
 		// If m_bAutogenSteps is disabled, only autogen lights.
-		// if( !PREFSMAN->m_bAutogenSteps && stMissing != StepsType_lights_cabinet )
-		if( !false && stMissing != StepsType_lights_cabinet )
+		if( !PREFSMAN->m_bAutogenSteps && stMissing != StepsType_lights_cabinet )
 			continue;
 		if( !GAMEMAN->GetStepsTypeInfo(stMissing).bAllowAutogen )
 			continue;
@@ -1877,37 +1876,37 @@ float Song::GetPreviewStartSeconds() const
 	return 0.0f;
 }
 
-// RString Song::GetDisplayMainTitle() const
-// {
-// 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitMainTitle();
-// 	return m_sMainTitle;
-// }
+RString Song::GetDisplayMainTitle() const
+{
+	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitMainTitle();
+	return m_sMainTitle;
+}
 
-// RString Song::GetDisplaySubTitle() const
-// {
-// 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitSubTitle();
-// 	return m_sSubTitle;
-// }
+RString Song::GetDisplaySubTitle() const
+{
+	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitSubTitle();
+	return m_sSubTitle;
+}
 
-// RString Song::GetDisplayArtist() const
-// {
-// 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitArtist();
-// 	return m_sArtist;
-// }
+RString Song::GetDisplayArtist() const
+{
+	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitArtist();
+	return m_sArtist;
+}
 
 RString Song::GetMainTitle() const
 {
 	return m_sMainTitle;
 }
 
-// RString Song::GetDisplayFullTitle() const
-// {
-// 	RString Title = GetDisplayMainTitle();
-// 	RString SubTitle = GetDisplaySubTitle();
+RString Song::GetDisplayFullTitle() const
+{
+	RString Title = GetDisplayMainTitle();
+	RString SubTitle = GetDisplaySubTitle();
 
-// 	if(!SubTitle.empty()) Title += " " + SubTitle;
-// 	return Title;
-// }
+	if(!SubTitle.empty()) Title += " " + SubTitle;
+	return Title;
+}
 
 RString Song::GetTranslitFullTitle() const
 {
