@@ -1,4 +1,5 @@
 set(OGG_DIR "${SM_EXTERN_DIR}/newogg")
+set(OGG_BUILD_DIR "${SM_BUILD_EXTERN_DIR}/newogg")
 
 list(APPEND OGG_SRC "${OGG_DIR}/src/bitwise.c" "${OGG_DIR}/src/framing.c")
 
@@ -19,4 +20,4 @@ disable_project_warnings("ogg")
 target_include_directories("ogg" PUBLIC "${OGG_DIR}/include")
 
 configure_file("${SM_EXTERN_DIR}/config.ogg.types.in.h"
-               "${OGG_DIR}/include/ogg/config_types.h")
+               "${SM_BUILD_EXTERN_DIR}/include/ogg/config_types.h")

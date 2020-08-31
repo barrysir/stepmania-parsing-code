@@ -2,8 +2,8 @@ if(WITH_SYSTEM_MAD)
   find_package(Mad REQUIRED)
 else()
   # MAD_DIR = MAD_SRC_DIR but i don't want to rename the variable
-  set(MAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mad-0.15.1b)
-  set(MAD_BUILD_DIR ${CMAKE_BINARY_DIR}/extern/mad-0.15.1b)
+  set(MAD_DIR ${SM_EXTERN_DIR}/mad-0.15.1b)
+  set(MAD_BUILD_DIR ${SM_BUILD_EXTERN_DIR}/mad-0.15.1b)
 
   list(APPEND MAD_SRC
               "${MAD_DIR}/bit.c"
@@ -49,7 +49,7 @@ else()
 
   set_property(TARGET "mad" PROPERTY FOLDER "External Libraries")
 
-  # disable_project_warnings("mad")
+  disable_project_warnings("mad")
 
   if(ENDIAN_BIG)
     set(WORDS_BIGENDIAN 1)
@@ -69,12 +69,15 @@ else()
     sm_add_compile_definition("mad" $<$<CONFIG:RelWithDebInfo>:FPM_INTEL>)
     # TODO: Provide a proper define for inline.
     sm_add_compile_definition("mad" inline=__inline)
-  # elseif(APPLE OR UNIX)   # ???????
+  elseif(APPLE OR UNIX)
+    sm_add_compile_definition("mad" FPM_64BIT=1)
+  # barry edit: 
+  # I'm compiling this on MINGW which is apparently neither of MSVC APPLE or UNIX,
+  # adding this case to handle that
   else()
     sm_add_compile_definition("mad" FPM_64BIT=1)
   endif(MSVC)
 
-  target_include_directories("mad" PUBLIC ${MAD_BUILD_DIR})
-
   configure_file("config.mad.in.h" "${MAD_BUILD_DIR}/config.h")
+  target_include_directories("mad" PUBLIC ${MAD_BUILD_DIR})
 endif()

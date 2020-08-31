@@ -11,24 +11,30 @@ list(APPEND SM_PARSER_CPP smparser.cpp smparser_SimfileLoader.cpp)
 add_library(smparser ${SM_PARSER_CPP})
 target_link_libraries(smparser pcre)
 target_link_libraries(smparser "lua-5.1")
-target_link_libraries(smparser libtomcrypt)
+target_link_libraries(smparser tomcrypt)
 target_link_libraries(smparser jsoncpp)
 
 if(HAS_MP3)
-    sm_add_compile_definition(smparser HAS_MP3)
     target_link_libraries(smparser mad)
 endif()
 
-if(HAS_WAV)
-    sm_add_compile_definition(smparser HAS_WAV)
-endif()
-
 if(HAS_OGG)
-    sm_add_compile_definition(smparser HAS_OGG)
     target_link_libraries(smparser vorbisfile)
     target_link_libraries(smparser vorbis)
     target_link_libraries(smparser ogg)
 endif()
 
+sm_add_compile_definition(smparser CMAKE_POWERED)
+
+# Mysterious compiler flag to make it compile
+# See the CMake option for the reasoning behind this
+if(WITH_PORTABLE_TOMCRYPT)
+    sm_add_compile_definition(smparser LTC_NO_ASM)
+endif()
+
 target_include_directories(smparser PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_include_directories(smparser PUBLIC ${SM_EXTERN_DIR}/jsoncpp/include)
+
+configure_file("${SM_SRC_DIR}/config.in.hpp"
+               "${SM_BUILD_SRC_DIR}/generated/config.hpp")
+target_include_directories(smparser PUBLIC ${SM_BUILD_SRC_DIR}/generated)

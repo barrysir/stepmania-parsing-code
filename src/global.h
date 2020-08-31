@@ -1,11 +1,11 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-// #if defined(CMAKE_POWERED)
-// #include "config.hpp"
-// #elif defined(HAVE_CONFIG_H)
-// #include "config.h"
-// #endif
+#if defined(CMAKE_POWERED)
+#include "config.hpp"
+#elif defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
 #define PRINTF(a,b)
 #define CONST_FUNCTION
 
