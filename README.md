@@ -2,9 +2,9 @@
 
 ### **[Check out the wiki!](https://github.com/barrysir/smparser/wiki)**
 
-The bits of Stepmania's source code related to simfile parsing, made to compile standalone. Good if you need perfectly accurate file parsing.
+The bits of Stepmania's source code related to simfile parsing, made to compile standalone. Good if you need accurate parsing.
 
-Still WIP, not all functions work, sorry about that.
+Still WIP, not all functions work, sorry about that. Check out the "Quirks" section of this readme if you're having problems or let me know.
 
 I'm not a C++ programmer, I've probably made some weird choices while making this library, if you find anything that could be improved let me know.
 
@@ -22,17 +22,17 @@ I'm not a C++ programmer, I've probably made some weird choices while making thi
 
 ## Compiling
 
-If you know CMake you probably know what to do better than me.
+If you know CMake you probably know what to do better than me. Intended to be built out-of-source.
 ```
 cmake .. -G (generator type) -DCMAKE_BUILD_TYPE=(Release, Debug, whatever)
 ```
- I'm a newbie to CMake myself, and I'll write what I do to compile it which I'll put at the bottom of this readme to avoid clutter.
-
 Stepmania CMake scripts support MSVC, APPLE, and UNIX.
+
+I'm a newbie to CMake myself, and I'll write what I do to compile it which I'll put at the bottom of this readme to avoid clutter.
 
 ## Usage
 
-CMake will generate a static library `libsmparser.a` for linking. Includes are found in the `src/` directory (this mimics Stepmania's codebase style). You can call the Stepmania code directly, or included in the library are some helper functions I've written, found under the `smparser` prefixed files.
+CMake will generate a static library `libsmparser.a` for linking. Header files are found in the `src/` directory (this mimics Stepmania's codebase style). You can call the Stepmania code directly, or included in the library are some helper functions I've written, found under the `smparser` prefixed files.
   * `smparser.h`: contains a RAII style class to initialize all the Stepmania global variables
   * `smparser_SimfileLoader.h`: helper class to provide a clean interface for loading/saving simfiles
   
@@ -78,10 +78,12 @@ Songs have a TidyUpData() function which
 This is a potentially costly operation you may not want to do. `SimfileLoader::Load` or `SimfileLoader::LoadFromDir` will call TidyUpData by default, but you can turn this off using the `tidyupdata` boolean (at the cost of some parsing accuracy).
 
 ### Radar value calculation
-Radar values are NOT read by the parser, instead Stepmania recalculates them when TidyUpData is called. At the moment there is no way to get the parser to read the radar values, but in the future I might hack in some code to parse them and a flag to enable/disable it.
+**Stepmania does not parse radar values**, instead it recalculates them (when TidyUpData is called). At the moment there is no way to get the parser to read the radar values, but in the future I might hack in some code to parse them and a flag to enable/disable it.
 
 ### `NoteData` and `GAMESTATE->GetProcessedTimingData`
-Some functions in `NoteData` access a `TimingData` instance through the `GAMESTATE->GetProcessedTimingData` pointer, the pointer must be set through `GAMESTATE->SetProcessedTimingData` beforehand or you may get some pointer shenanigans. (Setting `GAMESTATE->SetProcessedTimingData` before working with `NoteData` is a common pattern throughout the Stepmania codebase.) I can't see an easy workaround for this, so unfortunately that's how it is for now.
+**`GAMESTATE->SetProcessedTimingData` should be called before using a `NoteData` object, or you may get pointer shenanigans**. This is because some `Notedata` functions access a `TimingData` instance through the `GAMESTATE->GetProcessedTimingData` pointer. I can't see an easy workaround for this, so unfortunately that's how it is for now.
+
+(It's a common pattern throughout the Stepmania codebase to set `GAMESTATE->SetProcessedTimingData` before working with `NoteData`.)
 ```c++
 void fiddleWithNoteData(Steps *s) {
   NoteData nd = s->GetNoteData();
