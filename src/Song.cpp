@@ -5,7 +5,7 @@
 #include "RageLog.h"
 #include "NoteData.h"
 #include "RageSoundReader_FileReader.h"
-// #include "RageSurface_Load.h"
+#include "RageSurface_Load.h"
 // #include "SongCacheIndex.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
@@ -17,7 +17,7 @@
 // #include "Sprite.h"
 // #include "RageFile.h"
 #include "RageFileManager.h"
-// #include "RageSurface.h"
+#include "RageSurface.h"
 // #include "RageTextureManager.h"
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
@@ -40,6 +40,9 @@
 #include <time.h>
 #include <set>
 #include <float.h>
+
+// barry edit: for debugging purposes (remove this later)
+#include <iostream>
 
 //-Nick12 Used for song file hashing
 #include <CryptManager.h>
@@ -967,127 +970,127 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 					m_sCDTitleFile, empty_list, contains, empty_list);
 			}
 
-// 			/* Now, For the images we still haven't found,
-// 			 * look at the image dimensions of the remaining unclassified images. */
-// 			for(unsigned int i= 0; i < image_list.size(); ++i) // foreach image
-// 			{
-// 				if(m_bHasBanner && m_bHasBackground && has_cdtitle)
-// 				break; // done
+			/* Now, For the images we still haven't found,
+			 * look at the image dimensions of the remaining unclassified images. */
+			for(unsigned int i= 0; i < image_list.size(); ++i) // foreach image
+			{
+				if(m_bHasBanner && m_bHasBackground && has_cdtitle)
+				break; // done
 
-// 				// ignore DWI "-char" graphics
-// 				RString lower = image_list[i];
-// 				lower.MakeLower();
-// 				if(BlacklistedImages.find(lower) != BlacklistedImages.end())
-// 				continue;	// skip
+				// ignore DWI "-char" graphics
+				RString lower = image_list[i];
+				lower.MakeLower();
+				if(BlacklistedImages.find(lower) != BlacklistedImages.end())
+				continue;	// skip
 
-// 				// Skip any image that we've already classified
+				// Skip any image that we've already classified
 
-// 				if(m_bHasBanner && m_sBannerFile.EqualsNoCase(image_list[i]))
-// 				continue;	// skip
+				if(m_bHasBanner && m_sBannerFile.EqualsNoCase(image_list[i]))
+				continue;	// skip
 
-// 				if(m_bHasBackground && m_sBackgroundFile.EqualsNoCase(image_list[i]))
-// 				continue;	// skip
+				if(m_bHasBackground && m_sBackgroundFile.EqualsNoCase(image_list[i]))
+				continue;	// skip
 
-// 				if(has_cdtitle && m_sCDTitleFile.EqualsNoCase(image_list[i]))
-// 				continue;	// skip
+				if(has_cdtitle && m_sCDTitleFile.EqualsNoCase(image_list[i]))
+				continue;	// skip
 
-// 				if(has_jacket && m_sJacketFile.EqualsNoCase(image_list[i]))
-// 				continue;	// skip
+				if(has_jacket && m_sJacketFile.EqualsNoCase(image_list[i]))
+				continue;	// skip
 
-// 				if(has_disc && m_sDiscFile.EqualsNoCase(image_list[i]))
-// 				continue;	// skip
+				if(has_disc && m_sDiscFile.EqualsNoCase(image_list[i]))
+				continue;	// skip
 
-// 				if(has_cdimage && m_sCDFile.EqualsNoCase(image_list[i]))
-// 				continue;	// skip
+				if(has_cdimage && m_sCDFile.EqualsNoCase(image_list[i]))
+				continue;	// skip
 
-// 				RString sPath = m_sSongDir + image_list[i];
+				RString sPath = m_sSongDir + image_list[i];
 
-// 				// We only care about the dimensions.
-// 				RString error;
-// 				RageSurface *img = RageSurfaceUtils::LoadFile(sPath, error, true);
-// 				if(!img)
-// 				{
-// 					LOG->UserLog("Graphic file", sPath, "couldn't be loaded: %s", error.c_str());
-// 					continue;
-// 				}
+				// We only care about the dimensions.
+				RString error;
+				RageSurface *img = RageSurfaceUtils::LoadFile(sPath, error, true);
+				if(!img)
+				{
+					LOG->UserLog("Graphic file", sPath, "couldn't be loaded: %s", error.c_str());
+					continue;
+				}
 
-// 				const int width = img->w;
-// 				const int height = img->h;
-// 				delete img;
+				const int width = img->w;
+				const int height = img->h;
+				delete img;
 
-// 				if(!m_bHasBackground && width >= 320 && height >= 240)
-// 				{
-// 					m_sBackgroundFile = image_list[i];
-// 					m_bHasBackground= true;
-// 					continue;
-// 				}
+				if(!m_bHasBackground && width >= 320 && height >= 240)
+				{
+					m_sBackgroundFile = image_list[i];
+					m_bHasBackground= true;
+					continue;
+				}
 
-// 				if(!m_bHasBanner && 100 <= width && width <= 320 &&
-// 					50 <= height && height <= 240)
-// 				{
-// 					m_sBannerFile = image_list[i];
-// 					m_bHasBanner= true;
-// 					continue;
-// 				}
+				if(!m_bHasBanner && 100 <= width && width <= 320 &&
+					50 <= height && height <= 240)
+				{
+					m_sBannerFile = image_list[i];
+					m_bHasBanner= true;
+					continue;
+				}
 
-// 				/* Some songs have overlarge banners. Check if the ratio is reasonable
-// 				 * (over 2:1; usually over 3:1), and large (not a cdtitle). */
-// 				if(!m_bHasBanner && width > 200 && float(width) / height > 2.0f)
-// 				{
-// 					m_sBannerFile = image_list[i];
-// 					m_bHasBanner= true;
-// 					continue;
-// 				}
+				/* Some songs have overlarge banners. Check if the ratio is reasonable
+				 * (over 2:1; usually over 3:1), and large (not a cdtitle). */
+				if(!m_bHasBanner && width > 200 && float(width) / height > 2.0f)
+				{
+					m_sBannerFile = image_list[i];
+					m_bHasBanner= true;
+					continue;
+				}
 
-// 				/* Agh. DWI's inline title images are triggering this, resulting in
-// 				 * kanji, etc., being used as a CDTitle for songs with none. Some
-// 				 * sample data from random incarnations:
-// 				 *   42x50 35x50 50x50 144x49
-// 				 * It looks like ~50 height is what people use to align to DWI's font.
-// 				 *
-// 				 * My tallest CDTitle is 44. Let's cut off in the middle and hope for
-// 				 * the best. -(who? -aj) */
-// 				/* The proper size of a CDTitle is 64x48 or sometihng. Simfile artists
-// 				 * typically don't give a shit about this (see Cetaka's fucking banner
-// 				 * -sized CDTitle). This is also subverted in certain designs (beta
-// 				 * Mungyodance 3 simfiles, for instance, used the CDTitle to hold
-// 				 * various information about the song in question). As it stands,
-// 				 * I'm keeping this code until I figure out wtf to do -aj
-// 				 */
-// 				if(!has_cdtitle && width <= 100 && height <= 48)
-// 				{
-// 					m_sCDTitleFile = image_list[i];
-// 					has_cdtitle= true;
-// 					continue;
-// 				}
+				/* Agh. DWI's inline title images are triggering this, resulting in
+				 * kanji, etc., being used as a CDTitle for songs with none. Some
+				 * sample data from random incarnations:
+				 *   42x50 35x50 50x50 144x49
+				 * It looks like ~50 height is what people use to align to DWI's font.
+				 *
+				 * My tallest CDTitle is 44. Let's cut off in the middle and hope for
+				 * the best. -(who? -aj) */
+				/* The proper size of a CDTitle is 64x48 or sometihng. Simfile artists
+				 * typically don't give a shit about this (see Cetaka's fucking banner
+				 * -sized CDTitle). This is also subverted in certain designs (beta
+				 * Mungyodance 3 simfiles, for instance, used the CDTitle to hold
+				 * various information about the song in question). As it stands,
+				 * I'm keeping this code until I figure out wtf to do -aj
+				 */
+				if(!has_cdtitle && width <= 100 && height <= 48)
+				{
+					m_sCDTitleFile = image_list[i];
+					has_cdtitle= true;
+					continue;
+				}
 
-// 				// Jacket files typically have the same width and height.
-// 				if(!has_jacket && width == height)
-// 				{
-// 					m_sJacketFile = image_list[i];
-// 					has_jacket= true;
-// 					continue;
-// 				}
+				// Jacket files typically have the same width and height.
+				if(!has_jacket && width == height)
+				{
+					m_sJacketFile = image_list[i];
+					has_jacket= true;
+					continue;
+				}
 
-// 				// Disc images are typically rectangular; make sure we have a banner already.
-// 				if(!has_disc && (width > height) && m_bHasBanner)
-// 				{
-// 					if(image_list[i] != m_sBannerFile)
-// 					{
-// 						m_sDiscFile = image_list[i];
-// 						has_disc= true;
-// 					}
-// 					continue;
-// 				}
+				// Disc images are typically rectangular; make sure we have a banner already.
+				if(!has_disc && (width > height) && m_bHasBanner)
+				{
+					if(image_list[i] != m_sBannerFile)
+					{
+						m_sDiscFile = image_list[i];
+						has_disc= true;
+					}
+					continue;
+				}
 
-// 				// CD images are the same as Jackets, typically the same width and height
-// 				if(!has_cdimage && width == height)
-// 				{
-// 					m_sCDFile = image_list[i];
-// 					has_cdimage= true;
-// 					continue;
-// 				}
-// 			}
+				// CD images are the same as Jackets, typically the same width and height
+				if(!has_cdimage && width == height)
+				{
+					m_sCDFile = image_list[i];
+					has_cdimage= true;
+					continue;
+				}
+			}
 			// If no BGChanges are specified and there are movies in the song
 			// directory, then assume they are DWI style where the movie begins at
 			// beat 0.

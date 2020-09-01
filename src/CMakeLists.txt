@@ -6,6 +6,7 @@ endif()
 if(HAS_OGG)
     list(APPEND SM_PARSER_CPP RageSoundReader_Vorbisfile.cpp)
 endif()
+list(APPEND SM_PARSER_CPP RageSurface.cpp RageSurface_Load.cpp RageSurface_Load_BMP.cpp RageSurface_Load_GIF.cpp)
 list(APPEND SM_PARSER_CPP smparser.cpp smparser_SimfileLoader.cpp)
 
 add_library(smparser ${SM_PARSER_CPP})
