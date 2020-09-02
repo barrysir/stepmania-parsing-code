@@ -18,3 +18,5 @@ if(HAS_OGG)
     include(CMakeProject-vorbisfile.cmake)
   endif()
 endif()
+
+include(CMakeProject-jpeg.cmake)
