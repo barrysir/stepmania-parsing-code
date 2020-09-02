@@ -20,3 +20,6 @@ if(HAS_OGG)
 endif()
 
 include(CMakeProject-jpeg.cmake)
+
+include(CMakeProject-zlib.cmake)
+include(CMakeProject-png.cmake)

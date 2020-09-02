@@ -1,8 +1,7 @@
 #include "global.h"
 #include "ActorUtil.h"
 #include "RageSurface_Load.h"
-// commented for now
-// #include "RageSurface_Load_PNG.h"
+#include "RageSurface_Load_PNG.h"
 #include "RageSurface_Load_JPEG.h"
 #include "RageSurface_Load_GIF.h"
 #include "RageSurface_Load_BMP.h"
@@ -11,14 +10,13 @@
 #include "RageLog.h"
 #include <set>
 
-
 static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error, RString format, bool &bKeepTrying )
 {
 	RageSurface *ret = nullptr;
 	RageSurfaceUtils::OpenResult result;
-	// if( !format.CompareNoCase("png") )
-	// 	result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
-	if( !format.CompareNoCase("gif") )
+	if( !format.CompareNoCase("png") )
+		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
+	else if( !format.CompareNoCase("gif") )
 		result = RageSurface_Load_GIF( sPath, ret, bHeaderOnly, error );
 	else if( !format.CompareNoCase("jpg") || !format.CompareNoCase("jpeg") )
 		result = RageSurface_Load_JPEG( sPath, ret, bHeaderOnly, error );
