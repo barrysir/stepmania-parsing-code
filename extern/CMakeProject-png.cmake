@@ -42,6 +42,7 @@ else()
     sm_add_compile_definition("png" _CRT_SECURE_NO_WARNINGS)
   endif()
 
+  # barry edit - added this line -- fails to compile if it's missing
   target_link_libraries("png" "zlib")
   target_include_directories("png" PUBLIC "zlib")
 endif()
