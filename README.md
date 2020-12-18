@@ -1,12 +1,10 @@
 # stepmania-parsing-code
 
-### **[Check out the wiki!](https://github.com/barrysir/smparser/wiki)**
+The bits of Stepmania's source code related to simfile parsing.
 
-The bits of Stepmania's source code related to simfile parsing, made to compile standalone. Good if you need accurate parsing.
+This was an attempt to leverage Stepmania's real source code to make a 100% accurate simfile parsing library, but I realized that it's probably better to build one from scratch and copy paste relevant bits of code over, so this project is defunct. Take a look if you're interested.
 
-Still WIP, not all functions work, sorry about that. Check out the "Quirks" section of this readme if you're having problems or let me know.
-
-I'm not a C++ programmer, I've probably made some weird choices while making this library, if you find anything that could be improved let me know.
+I'm not a C++ programmer, I've probably made some weird choices while making this, just giving a heads-up.
 
 ## Feature list
  * SM, SSC, DWI file parsing/saving
@@ -28,7 +26,7 @@ cmake .. -G (generator type) -DCMAKE_BUILD_TYPE=(Release, Debug, whatever)
 ```
 Stepmania CMake scripts support MSVC, APPLE, and UNIX.
 
-I'm a newbie to CMake myself, and I'll write what I do to compile it which I'll put at the bottom of this readme to avoid clutter.
+More detailed info of how I compile it below.
 
 ## Usage
 
