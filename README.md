@@ -1,10 +1,12 @@
 # stepmania-parsing-code
 
-The bits of Stepmania's source code related to simfile parsing.
+The bits of Stepmania's source code related to simfile parsing. Enough wiring is hooked up to use it as a fully-functional Stepmania file parser (though I'm not updating it anymore.)
 
-This was an attempt to leverage Stepmania's real source code to make a 100% accurate simfile parsing library, but I realized that it's probably better to build one from scratch and copy paste relevant bits of code over, so this project is defunct. Take a look if you're interested.
+This was an attempt to use Stepmania's real source code to make a 100% accurate simfile parsing library, but it's probably better to build one from scratch and copy paste relevant bits of code over, so this project is defunct. Still maybe interesting to look at.
 
 I'm not a C++ programmer, I've probably made some weird choices while making this, just giving a heads-up.
+
+Some way too extensive documentation I've put together on the SM file format is found in the [wiki](../../wiki).
 
 ## Feature list
  * SM, SSC, DWI file parsing/saving
